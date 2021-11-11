@@ -21,7 +21,7 @@ class _MainMenuState extends State<MainMenu> {
             children: [
               Container(
                 child: Text(
-                  'Menu',
+                  'Home',
                   style: TextStyle(color: Colors.white),
                 ),
               ),

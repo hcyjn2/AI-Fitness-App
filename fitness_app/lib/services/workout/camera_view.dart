@@ -9,8 +9,6 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../main.dart';
 
-// Future Builder
-
 enum ScreenMode { liveFeed, gallery }
 
 class CameraView extends StatefulWidget {
@@ -36,18 +34,19 @@ class _CameraViewState extends State<CameraView> {
   CameraController? _controller;
   File? _image;
   ImagePicker? _imagePicker;
-  int _cameraIndex = 0;
+  // 2 for rear camera on LG G7
+  int _cameraIndex = 2;
 
   @override
   void initState() {
     super.initState();
-
     _imagePicker = ImagePicker();
     for (var i = 0; i < cameras.length; i++) {
       if (cameras[i].lensDirection == widget.initialDirection) {
         _cameraIndex = i;
       }
     }
+
     _startLiveFeed();
   }
 

@@ -1,9 +1,10 @@
 import 'package:camera/camera.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:fitness_app/constants.dart';
-import 'package:fitness_app/screens/calorie_tracking.dart';
+import 'package:fitness_app/screens/scoreboard.dart';
 import 'package:fitness_app/screens/main_menu.dart';
 import 'package:fitness_app/screens/workout.dart';
+import 'package:fitness_app/services/workout/classification/pose_sample.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -12,7 +13,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 List<Widget> listWidgets = [
   WorkoutScreen(),
   MainMenu(),
-  CalorieTrackingScreen(),
+  ScoreboardScreen(),
 ];
 
 int pageIndex = 1;
@@ -33,6 +34,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    setState(() {});
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([]);
@@ -61,7 +69,7 @@ class _MyAppState extends State<MyApp> {
             ),
             TabItem(
               icon: Icon(
-                FontAwesomeIcons.cookieBite,
+                FontAwesomeIcons.chartBar,
                 color: Colors.white,
               ),
             ),

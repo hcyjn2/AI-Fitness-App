@@ -1,13 +1,15 @@
 import 'package:camera/camera.dart';
 import 'package:fitness_app/constants.dart';
 import 'package:fitness_app/services/workout/camera_view.dart';
-// import 'package:fitness_app/services/workout/classification/models/pose_classifier_processor.dart';
+import 'package:fitness_app/services/workout/classification/pose_classifier_processor.dart';
+import 'package:fitness_app/services/workout/classification/pose_sample.dart';
 import 'package:fitness_app/services/workout/pose_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 
 import '../../main.dart';
 
+final kVerbose = false;
 final isStreamMode = true;
 final PoseDetectorOptions poseDetectorOptions = PoseDetectorOptions(
     model: PoseDetectionModel.base, mode: PoseDetectionMode.streamImage);
@@ -23,8 +25,22 @@ class _ExperimentScreenState extends State<ExperimentScreen> {
   bool isBusy = false;
   CustomPaint? customPaint;
   late Future cameraFuture;
-  // late PoseClassifierProcessor poseClassifierProcessor;
-  late List<String> classificationResult;
+  List<String> classificationResult = [];
+  late PoseClassifierProcessor poseClassifierProcessor;
+  List<PoseSample> __poseSamples = [];
+  bool isInit = true;
+
+  //To Load Pose Samples from CSV
+  Future<List<PoseSample>> loadPoseSamples() async {
+    List<PoseSample> poseSamples = [];
+
+    List<String> csvData = await PoseSample.readCSV();
+
+    for (var row in csvData)
+      poseSamples.add(await PoseSample.getPoseSample(row));
+
+    return poseSamples;
+  }
 
   @override
   void dispose() async {
@@ -35,11 +51,13 @@ class _ExperimentScreenState extends State<ExperimentScreen> {
   @override
   void initState() {
     super.initState();
+
     cameraFuture = _getCameraFuture();
   }
 
   _getCameraFuture() async {
     cameras = await availableCameras();
+    __poseSamples = await loadPoseSamples();
   }
 
   @override
@@ -84,20 +102,29 @@ class _ExperimentScreenState extends State<ExperimentScreen> {
     final poses = await poseDetector.processImage(inputImage);
 
     // -----------------------Processing Body--------------------------------
+    if (isInit) {
+      poseClassifierProcessor =
+          await new PoseClassifierProcessor(isStreamMode, __poseSamples);
 
-    // poseClassifierProcessor = new PoseClassifierProcessor(isStreamMode);
-    //
-    // for (Pose pose in poses)
-    //   classificationResult = poseClassifierProcessor.getPoseResult(pose);
+      isInit = false;
+    }
 
-    print('Found ${poses.length} poses');
+    for (Pose pose in poses)
+      classificationResult = poseClassifierProcessor.getPoseResult(pose);
 
-    //Print the landmarks(tracking points of the body) coordinates
-    for (var i in poses) {
-      for (var j in i.landmarks.values) {
-        print(j.type);
-        print(j.x);
-        print(j.y);
+    if (classificationResult.isNotEmpty)
+      print('Output= ' + classificationResult.elementAt(0));
+
+    if (kVerbose) {
+      print('Found ${poses.length} poses');
+
+      //Print the landmarks(tracking points of the body) coordinates
+      for (var i in poses) {
+        for (var j in i.landmarks.values) {
+          print(j.type);
+          print(j.x);
+          print(j.y);
+        }
       }
     }
 

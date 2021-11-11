@@ -28,7 +28,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
           children: <Widget>[
             WorkoutButton(
                 child: Text(
-                  'Experiment',
+                  'Push Up',
                   style: GoogleFonts.nunito(textStyle: TextStyle(fontSize: 20)),
                 ),
                 color: kPrimaryColor,
@@ -42,7 +42,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 }),
             WorkoutButton(
                 child: Text(
-                  'Experiment',
+                  'Squat',
                   style: GoogleFonts.nunito(textStyle: TextStyle(fontSize: 20)),
                 ),
                 color: kSecondaryColor,

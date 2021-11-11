@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import '../constants.dart';
 
 // Calorie Tracking feature
-class CalorieTrackingScreen extends StatefulWidget {
+class ScoreboardScreen extends StatefulWidget {
   @override
-  _CalorieTrackingScreenState createState() => _CalorieTrackingScreenState();
+  _ScoreboardScreenState createState() => _ScoreboardScreenState();
 }
 
-class _CalorieTrackingScreenState extends State<CalorieTrackingScreen> {
+class _ScoreboardScreenState extends State<ScoreboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -22,7 +22,7 @@ class _CalorieTrackingScreenState extends State<CalorieTrackingScreen> {
             children: [
               Container(
                 child: Text(
-                  'Calorie',
+                  'Scoreboard',
                   style: TextStyle(color: Colors.white),
                 ),
               ),
