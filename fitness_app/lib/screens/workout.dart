@@ -27,9 +27,24 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
           crossAxisCount: 2,
           children: <Widget>[
             WorkoutButton(
-                child: Text(
-                  'Push Up',
-                  style: GoogleFonts.nunito(textStyle: TextStyle(fontSize: 20)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Push Up',
+                      style: GoogleFonts.nunito(textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    ),
+                    SizedBox(height: 15,),
+                    Image(image: AssetImage('assets/images/pushUp.png'), height: 50,),
+                    SizedBox(height: 10,),
+                    Row(
+                      children: [
+                        Image(image: AssetImage('assets/images/chest.png'), height: 40,),
+                        SizedBox(width: 15,),
+                        Image(image: AssetImage('assets/images/easy.png'), height: 20,),
+                      ],
+                    ),
+                  ],
                 ),
                 color: kPrimaryColor,
                 onPressed: () {
@@ -41,9 +56,23 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   );
                 }),
             WorkoutButton(
-                child: Text(
-                  'Squat',
-                  style: GoogleFonts.nunito(textStyle: TextStyle(fontSize: 20)),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Squat',
+                      style: GoogleFonts.nunito(textStyle: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    ),
+                    SizedBox(height: 8,),
+                    Image(image: AssetImage('assets/images/squat.png'), height: 70,),
+                    Row(
+                      children: [
+                        Image(image: AssetImage('assets/images/hamstrings.png'), height: 40,),
+                        SizedBox(width: 15,),
+                        Image(image: AssetImage('assets/images/easy.png'), height: 20,),
+                      ],
+                    ),
+                  ],
                 ),
                 color: kSecondaryColor,
                 onPressed: () {

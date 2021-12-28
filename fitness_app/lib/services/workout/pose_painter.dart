@@ -1,6 +1,8 @@
 import 'dart:ui';
 
+import 'package:fitness_app/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 
 import 'coordinates_translator.dart';
@@ -9,32 +11,18 @@ final double poseClassificationTextSize = 60.0;
 final bool showInFrameLikelihood = true;
 
 class PosePainter extends CustomPainter {
-  PosePainter(this.poses, this.absoluteImageSize, this.rotation);
+  PosePainter(this.poses, this.absoluteImageSize, this.rotation,
+      this.classificationResult);
 
   final List<Pose> poses;
   final Size absoluteImageSize;
   final InputImageRotation rotation;
+  final List<String> classificationResult;
   // List<String> poseClassification = [];
   // late TextPainter classificationTextPaint;
 
   @override
   void paint(Canvas canvas, Size size) {
-    // // Draw pose classification text.
-    // if (poseClassification.isNotEmpty) {
-    //   double classificationX = poseClassificationTextSize * 0.5;
-    //   for (int i = 0; i < poseClassification.length; i++) {
-    //     double classificationY = (-poseClassificationTextSize *
-    //         1.5 *
-    //         (poseClassification.length - i));
-    //
-    //     classificationTextPaint = new TextPainter()
-    //       ..text =
-    //           new TextSpan(text: poseClassification.elementAt(i).toString());
-    //
-    //     classificationTextPaint.paint(
-    //         canvas, Offset(classificationX, classificationY));
-    //   }
-
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4.0
@@ -96,16 +84,42 @@ class PosePainter extends CustomPainter {
           PoseLandmarkType.rightHip, PoseLandmarkType.rightAnkle, rightPaint);
     });
 
+    if (classificationResult.isNotEmpty) {
+      // double classificationX = poseClassificationTextSize * 0.5;
+      // double classificationY = -poseClassificationTextSize *
+      //     1.5 *
+      //     classificationResult.elementAt(0).length;
+      var width = window.physicalSize.width;
+      var height = window.physicalSize.height;
+
+      TextPainter classificationTextPaint = new TextPainter()
+        ..text = new TextSpan(
+          text: classificationResult.elementAt(0).toString(),
+          style: GoogleFonts.nunito(
+              textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              color: Colors.white,
+              background: Paint()
+                ..strokeWidth = 50.0
+                ..color = kPrimaryColor
+                ..style = PaintingStyle.stroke
+                ..strokeJoin = StrokeJoin.round),
+        )
+        ..textDirection = TextDirection.ltr;
+
+      classificationTextPaint.layout();
+
+      final xCenter = (size.width - classificationTextPaint.width) / 2;
+      final yCenter = (size.height - classificationTextPaint.height) * 0.90;
+      final offset = Offset(xCenter, yCenter);
+      classificationTextPaint.paint(canvas, offset);
+    }
+
     // for (var pose in poses) {
     //   for (PoseLandmark landmark in pose.landmarks.values) {
     //     // Draw inFrameLikelihood for all points
     //     if (showInFrameLikelihood)
-    //       TextPainter(
-    //               text: TextSpan(text: landmark.inFrameLikelihood.toString()))
-    //           .paint(
-    //               canvas,
-    //               Offset(
-    //                   landmark.position3D.getX(), landmark.position3D.getY()));
+    //       TextPainter(text: TextSpan(text: landmark.likelihood.toString()))
+    //           .paint(canvas, Offset(landmark.x, landmark.y));
     //   }
     // }
   }

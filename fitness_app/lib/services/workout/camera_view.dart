@@ -34,19 +34,17 @@ class _CameraViewState extends State<CameraView> {
   CameraController? _controller;
   File? _image;
   ImagePicker? _imagePicker;
-  // 2 for rear camera on LG G7
-  int _cameraIndex = 2;
+  int _cameraIndex = 1;
 
   @override
   void initState() {
     super.initState();
-    _imagePicker = ImagePicker();
-    for (var i = 0; i < cameras.length; i++) {
-      if (cameras[i].lensDirection == widget.initialDirection) {
-        _cameraIndex = i;
-      }
-    }
-
+    // _imagePicker = ImagePicker();
+    // for (var i = 0; i < cameras.length; i++) {
+    //   if (cameras[i].lensDirection == widget.initialDirection) {
+    //     _cameraIndex = i;
+    //   }
+    // }
     _startLiveFeed();
   }
 
@@ -61,22 +59,24 @@ class _CameraViewState extends State<CameraView> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: kPrimaryColor,
-        title: Text(widget.title),
-        actions: [
-          Padding(
-            padding: EdgeInsets.only(right: 20.0),
-            child: GestureDetector(
-              onTap: _switchScreenMode,
-              child: Icon(
-                _mode == ScreenMode.liveFeed
-                    ? Icons.photo_library_outlined
-                    : (Platform.isIOS
-                        ? Icons.camera_alt_outlined
-                        : Icons.camera),
-              ),
-            ),
-          ),
-        ],
+        title: Text('Workout Feature'),
+        centerTitle: true,
+        toolbarHeight: 40,
+        // actions: [
+        //   Padding(
+        //     padding: EdgeInsets.only(right: 20.0),
+        //     child: GestureDetector(
+        //       onTap: _switchScreenMode,
+        //       child: Icon(
+        //         _mode == ScreenMode.liveFeed
+        //             ? Icons.photo_library_outlined
+        //             : (Platform.isIOS
+        //                 ? Icons.camera_alt_outlined
+        //                 : Icons.camera),
+        //       ),
+        //     ),
+        //   ),
+        // ],
       ),
       body: _body(),
       floatingActionButton: _floatingActionButton(),
@@ -105,10 +105,11 @@ class _CameraViewState extends State<CameraView> {
 
   Widget _body() {
     Widget body;
-    if (_mode == ScreenMode.liveFeed)
-      body = _liveFeedBody();
-    else
-      body = _galleryBody();
+    body = _liveFeedBody();
+    // if (_mode == ScreenMode.liveFeed)
+    //   body = _liveFeedBody();
+    // else
+    //   body = _galleryBody();
     return body;
   }
 
@@ -128,57 +129,57 @@ class _CameraViewState extends State<CameraView> {
     );
   }
 
-  Widget _galleryBody() {
-    return ListView(shrinkWrap: true, children: [
-      _image != null
-          ? Container(
-              height: 400,
-              width: 400,
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  Image.file(_image!),
-                  if (widget.customPaint != null) widget.customPaint!,
-                ],
-              ),
-            )
-          : Icon(
-              Icons.image,
-              size: 200,
-            ),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30),
-        child: MaterialButton(
-          child: Text(
-            'From Gallery',
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          onPressed: () => _getImage(ImageSource.gallery),
-          color: kPrimaryColor,
-        ),
-      ),
-      Padding(
-        padding: EdgeInsets.symmetric(horizontal: 30),
-        child: MaterialButton(
-          child: Text('Take a picture',
-              style: TextStyle(color: Colors.white, fontSize: 18)),
-          onPressed: () => _getImage(ImageSource.camera),
-          color: kPrimaryColor,
-        ),
-      ),
-    ]);
-  }
+  // Widget _galleryBody() {
+  //   return ListView(shrinkWrap: true, children: [
+  //     _image != null
+  //         ? Container(
+  //             height: 400,
+  //             width: 400,
+  //             child: Stack(
+  //               fit: StackFit.expand,
+  //               children: <Widget>[
+  //                 Image.file(_image!),
+  //                 if (widget.customPaint != null) widget.customPaint!,
+  //               ],
+  //             ),
+  //           )
+  //         : Icon(
+  //             Icons.image,
+  //             size: 200,
+  //           ),
+  //     Padding(
+  //       padding: EdgeInsets.symmetric(horizontal: 30),
+  //       child: MaterialButton(
+  //         child: Text(
+  //           'From Gallery',
+  //           style: TextStyle(color: Colors.white, fontSize: 18),
+  //         ),
+  //         onPressed: () => _getImage(ImageSource.gallery),
+  //         color: kPrimaryColor,
+  //       ),
+  //     ),
+  //     Padding(
+  //       padding: EdgeInsets.symmetric(horizontal: 30),
+  //       child: MaterialButton(
+  //         child: Text('Take a picture',
+  //             style: TextStyle(color: Colors.white, fontSize: 18)),
+  //         onPressed: () => _getImage(ImageSource.camera),
+  //         color: kPrimaryColor,
+  //       ),
+  //     ),
+  //   ]);
+  // }
 
   // ==================================================Private Methods=========================================
-  Future _getImage(ImageSource source) async {
-    final pickedFile = await _imagePicker?.getImage(source: source);
-    if (pickedFile != null) {
-      _processPickedFile(pickedFile);
-    } else {
-      print('No image selected.');
-    }
-    setState(() {});
-  }
+  // Future _getImage(ImageSource source) async {
+  //   final pickedFile = await _imagePicker?.getImage(source: source);
+  //   if (pickedFile != null) {
+  //     _processPickedFile(pickedFile);
+  //   } else {
+  //     print('No image selected.');
+  //   }
+  //   setState(() {});
+  // }
 
   void _switchScreenMode() async {
     if (_mode == ScreenMode.liveFeed) {
@@ -222,13 +223,13 @@ class _CameraViewState extends State<CameraView> {
     await _startLiveFeed();
   }
 
-  Future _processPickedFile(PickedFile pickedFile) async {
-    setState(() {
-      _image = File(pickedFile.path);
-    });
-    final inputImage = InputImage.fromFilePath(pickedFile.path);
-    widget.onImage(inputImage);
-  }
+  // Future _processPickedFile(PickedFile pickedFile) async {
+  //   setState(() {
+  //     _image = File(pickedFile.path);
+  //   });
+  //   final inputImage = InputImage.fromFilePath(pickedFile.path);
+  //   widget.onImage(inputImage);
+  // }
 
   Future _processCameraImage(CameraImage image) async {
     final WriteBuffer allBytes = WriteBuffer();

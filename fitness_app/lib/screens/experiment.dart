@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:camera/camera.dart';
 import 'package:fitness_app/constants.dart';
 import 'package:fitness_app/services/workout/camera_view.dart';
@@ -29,6 +31,7 @@ class _ExperimentScreenState extends State<ExperimentScreen> {
   late PoseClassifierProcessor poseClassifierProcessor;
   List<PoseSample> __poseSamples = [];
   bool isInit = true;
+  int score = 0;
 
   //To Load Pose Samples from CSV
   Future<List<PoseSample>> loadPoseSamples() async {
@@ -112,29 +115,13 @@ class _ExperimentScreenState extends State<ExperimentScreen> {
     for (Pose pose in poses)
       classificationResult = poseClassifierProcessor.getPoseResult(pose);
 
-    if (classificationResult.isNotEmpty)
-      print('Output= ' + classificationResult.elementAt(0));
-
-    if (kVerbose) {
-      print('Found ${poses.length} poses');
-
-      //Print the landmarks(tracking points of the body) coordinates
-      for (var i in poses) {
-        for (var j in i.landmarks.values) {
-          print(j.type);
-          print(j.x);
-          print(j.y);
-        }
-      }
-    }
-
     // -----------------------Processing Body--------------------------------
 
     // Check if image input is valid then generate overlay over the images
     if (inputImage.inputImageData?.size != null &&
         inputImage.inputImageData?.imageRotation != null) {
       final painter = PosePainter(poses, inputImage.inputImageData!.size,
-          inputImage.inputImageData!.imageRotation);
+          inputImage.inputImageData!.imageRotation, classificationResult);
       customPaint = CustomPaint(painter: painter);
     } else {
       customPaint = null;
