@@ -3,7 +3,7 @@ import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:fitness_app/constants.dart';
 import 'package:fitness_app/screens/scoreboard.dart';
 import 'package:fitness_app/screens/main_menu.dart';
-import 'package:fitness_app/screens/workout.dart';
+import 'package:fitness_app/screens/workout_menu.dart';
 import 'package:fitness_app/services/workout/classification/pose_sample.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

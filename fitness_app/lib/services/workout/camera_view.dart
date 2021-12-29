@@ -1,13 +1,17 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:fitness_app/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../main.dart';
+
+// 0 = Loading, 1 = Workout Session, 2 = End of Workout
+int _state = 0;
 
 enum ScreenMode { liveFeed, gallery }
 
@@ -32,87 +36,166 @@ class CameraView extends StatefulWidget {
 class _CameraViewState extends State<CameraView> {
   ScreenMode _mode = ScreenMode.liveFeed;
   CameraController? _controller;
-  File? _image;
-  ImagePicker? _imagePicker;
   int _cameraIndex = 1;
+
+  late Timer _timer;
+  int _countDownDuration = 3;
+  int _workoutDuration = 30;
+
+  void startCountDownTimer() {
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        if (_countDownDuration == 0) {
+          setState(() {
+            _state = 1;
+            _startLiveFeed();
+            startWorkoutTimer();
+            timer.cancel();
+          });
+        } else {
+          setState(() {
+            _countDownDuration--;
+          });
+        }
+      },
+    );
+  }
+
+  void startWorkoutTimer() {
+    const oneSec = const Duration(seconds: 1);
+    _timer = new Timer.periodic(
+      oneSec,
+      (Timer timer) {
+        if (_workoutDuration == 0) {
+          setState(() {
+            _state = 2;
+            buildWorkoutFinishedAlert();
+            _stopLiveFeed();
+            timer.cancel();
+          });
+        } else {
+          setState(() {
+            _workoutDuration--;
+          });
+        }
+      },
+    );
+  }
 
   @override
   void initState() {
     super.initState();
-    // _imagePicker = ImagePicker();
-    // for (var i = 0; i < cameras.length; i++) {
-    //   if (cameras[i].lensDirection == widget.initialDirection) {
-    //     _cameraIndex = i;
-    //   }
-    // }
-    _startLiveFeed();
+    startCountDownTimer();
   }
 
   @override
   void dispose() {
-    _stopLiveFeed();
+    _state = 0;
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: kPrimaryColor,
-        title: Text('Workout Feature'),
-        centerTitle: true,
-        toolbarHeight: 40,
-        // actions: [
-        //   Padding(
-        //     padding: EdgeInsets.only(right: 20.0),
-        //     child: GestureDetector(
-        //       onTap: _switchScreenMode,
-        //       child: Icon(
-        //         _mode == ScreenMode.liveFeed
-        //             ? Icons.photo_library_outlined
-        //             : (Platform.isIOS
-        //                 ? Icons.camera_alt_outlined
-        //                 : Icons.camera),
-        //       ),
-        //     ),
-        //   ),
-        // ],
+      floatingActionButton: _state == 1
+          ? Padding(
+              padding: const EdgeInsets.only(top: 110),
+              child: Container(
+                height: 80,
+                width: 80,
+                child: FittedBox(
+                  child: FloatingActionButton(
+                    onPressed: () {},
+                    backgroundColor: kPrimaryColor,
+                    child: Text(
+                      _workoutDuration.toString(),
+                      style: GoogleFonts.nunito(
+                          textStyle: TextStyle(
+                              fontSize: 30, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      appBar: _state == 1
+          ? AppBar(
+              backgroundColor: kPrimaryColor,
+              title: Text('Workout Feature'),
+              centerTitle: true,
+              toolbarHeight: 40,
+              actions: [
+                Padding(
+                  padding: EdgeInsets.only(right: 20.0),
+                  child: GestureDetector(
+                    onTap: _switchLiveCamera,
+                    child: Icon(
+                      Platform.isIOS
+                          ? Icons.flip_camera_ios_outlined
+                          : Icons.flip_camera_android_outlined,
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : null,
+      body: buildBody(_state),
+      // floatingActionButton: _floatingActionButton(),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+
+  Widget buildBody(int state) {
+    if (state == 0) {
+      return _countDownBody();
+    } else if (state == 1) {
+      return _liveFeedBody();
+    } else {
+      return _workoutFinishedBody();
+    }
+  }
+
+  Widget _workoutFinishedBody() {
+    return Container(color: kPrimaryColor);
+  }
+
+  Widget _countDownBody() {
+    return Container(
+      color: kPrimaryColor,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Ready ?',
+              style: GoogleFonts.nunito(
+                textStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 55,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Text(
+              _countDownDuration.toString(),
+              style: GoogleFonts.nunito(
+                textStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 80,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
+          ],
+        ),
       ),
-      body: _body(),
-      floatingActionButton: _floatingActionButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 
   // ===========================================Widgets====================================================
-  Widget? _floatingActionButton() {
-    if (_mode == ScreenMode.gallery) return null;
-    if (cameras.length == 1) return null;
-    return Container(
-        height: 70.0,
-        width: 70.0,
-        child: FloatingActionButton(
-          backgroundColor: kPrimaryColor,
-          child: Icon(
-            Platform.isIOS
-                ? Icons.flip_camera_ios_outlined
-                : Icons.flip_camera_android_outlined,
-            size: 40,
-          ),
-          onPressed: _switchLiveCamera,
-        ));
-  }
-
-  Widget _body() {
-    Widget body;
-    body = _liveFeedBody();
-    // if (_mode == ScreenMode.liveFeed)
-    //   body = _liveFeedBody();
-    // else
-    //   body = _galleryBody();
-    return body;
-  }
-
   Widget _liveFeedBody() {
     if (_controller?.value.isInitialized == false) {
       return Container();
@@ -129,68 +212,7 @@ class _CameraViewState extends State<CameraView> {
     );
   }
 
-  // Widget _galleryBody() {
-  //   return ListView(shrinkWrap: true, children: [
-  //     _image != null
-  //         ? Container(
-  //             height: 400,
-  //             width: 400,
-  //             child: Stack(
-  //               fit: StackFit.expand,
-  //               children: <Widget>[
-  //                 Image.file(_image!),
-  //                 if (widget.customPaint != null) widget.customPaint!,
-  //               ],
-  //             ),
-  //           )
-  //         : Icon(
-  //             Icons.image,
-  //             size: 200,
-  //           ),
-  //     Padding(
-  //       padding: EdgeInsets.symmetric(horizontal: 30),
-  //       child: MaterialButton(
-  //         child: Text(
-  //           'From Gallery',
-  //           style: TextStyle(color: Colors.white, fontSize: 18),
-  //         ),
-  //         onPressed: () => _getImage(ImageSource.gallery),
-  //         color: kPrimaryColor,
-  //       ),
-  //     ),
-  //     Padding(
-  //       padding: EdgeInsets.symmetric(horizontal: 30),
-  //       child: MaterialButton(
-  //         child: Text('Take a picture',
-  //             style: TextStyle(color: Colors.white, fontSize: 18)),
-  //         onPressed: () => _getImage(ImageSource.camera),
-  //         color: kPrimaryColor,
-  //       ),
-  //     ),
-  //   ]);
-  // }
-
   // ==================================================Private Methods=========================================
-  // Future _getImage(ImageSource source) async {
-  //   final pickedFile = await _imagePicker?.getImage(source: source);
-  //   if (pickedFile != null) {
-  //     _processPickedFile(pickedFile);
-  //   } else {
-  //     print('No image selected.');
-  //   }
-  //   setState(() {});
-  // }
-
-  void _switchScreenMode() async {
-    if (_mode == ScreenMode.liveFeed) {
-      _mode = ScreenMode.gallery;
-      await _stopLiveFeed();
-    } else {
-      _mode = ScreenMode.liveFeed;
-      await _startLiveFeed();
-    }
-    setState(() {});
-  }
 
   Future _startLiveFeed() async {
     final camera = cameras[_cameraIndex];
@@ -212,6 +234,7 @@ class _CameraViewState extends State<CameraView> {
     await _controller?.stopImageStream();
     await _controller?.dispose();
     _controller = null;
+    _state = 2;
   }
 
   Future _switchLiveCamera() async {
@@ -222,14 +245,6 @@ class _CameraViewState extends State<CameraView> {
     await _stopLiveFeed();
     await _startLiveFeed();
   }
-
-  // Future _processPickedFile(PickedFile pickedFile) async {
-  //   setState(() {
-  //     _image = File(pickedFile.path);
-  //   });
-  //   final inputImage = InputImage.fromFilePath(pickedFile.path);
-  //   widget.onImage(inputImage);
-  // }
 
   Future _processCameraImage(CameraImage image) async {
     final WriteBuffer allBytes = WriteBuffer();
@@ -271,5 +286,40 @@ class _CameraViewState extends State<CameraView> {
         InputImage.fromBytes(bytes: bytes, inputImageData: inputImageData);
 
     widget.onImage(inputImage);
+  }
+
+  Future buildWorkoutFinishedAlert() {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+                'Great Work! \n\n You have just finished the workout. \n Give yourself a pat on the back.',
+                textAlign: TextAlign.center,
+                style: GoogleFonts.nunito(
+                    textStyle:
+                        TextStyle(fontSize: 15, fontWeight: FontWeight.bold))),
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                MaterialButton(
+                  elevation: 5.0,
+                  color: Colors.grey,
+                  child: Text('BACK',
+                      style: GoogleFonts.nunito(
+                          textStyle: TextStyle(
+                              fontSize: 14, fontWeight: FontWeight.bold))),
+                  onPressed: () async {
+                    setState(() {
+                      //NO Action
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    });
+                  },
+                ),
+              ],
+            ),
+          );
+        });
   }
 }
