@@ -11,7 +11,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 // initialize variables
 List<Widget> listWidgets = [
-  WorkoutScreen(),
+  WorkoutMenu(),
   MainMenu(),
   ScoreboardScreen(),
 ];

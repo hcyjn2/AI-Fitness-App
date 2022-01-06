@@ -12,14 +12,13 @@ final bool showInFrameLikelihood = true;
 
 class PosePainter extends CustomPainter {
   PosePainter(this.poses, this.absoluteImageSize, this.rotation,
-      this.classificationResult);
+      this.resultClass, this.resultRep);
 
   final List<Pose> poses;
   final Size absoluteImageSize;
   final InputImageRotation rotation;
-  final List<String> classificationResult;
-  // List<String> poseClassification = [];
-  // late TextPainter classificationTextPaint;
+  final List<String> resultClass;
+  final List<int> resultRep;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -84,7 +83,7 @@ class PosePainter extends CustomPainter {
           PoseLandmarkType.rightHip, PoseLandmarkType.rightAnkle, rightPaint);
     });
 
-    if (classificationResult.isNotEmpty) {
+    if (resultClass.isNotEmpty) {
       // double classificationX = poseClassificationTextSize * 0.5;
       // double classificationY = -poseClassificationTextSize *
       //     1.5 *
@@ -92,9 +91,15 @@ class PosePainter extends CustomPainter {
       var width = window.physicalSize.width;
       var height = window.physicalSize.height;
 
+      String className = classIdentifierToClassName(resultClass.last);
+      String classRepetition = resultRep.last.toString();
+
+      String classificationResultText =
+          className + ' : ' + classRepetition + ' reps.';
+
       TextPainter classificationTextPaint = new TextPainter()
         ..text = new TextSpan(
-          text: classificationResult.elementAt(0).toString(),
+          text: classificationResultText,
           style: GoogleFonts.nunito(
               textStyle: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               color: Colors.white,
@@ -114,6 +119,7 @@ class PosePainter extends CustomPainter {
       classificationTextPaint.paint(canvas, offset);
     }
 
+    // Classification Confidence
     // for (var pose in poses) {
     //   for (PoseLandmark landmark in pose.landmarks.values) {
     //     // Draw inFrameLikelihood for all points

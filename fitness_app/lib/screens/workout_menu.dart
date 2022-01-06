@@ -1,3 +1,4 @@
+import 'package:fitness_app/screens/workout_calibration.dart';
 import 'package:fitness_app/screens/workout_session.dart';
 import 'package:fitness_app/widgets/custom_card.dart';
 import 'package:flutter/material.dart';
@@ -6,12 +7,12 @@ import 'package:google_fonts/google_fonts.dart';
 import '../constants.dart';
 
 // Workout feature
-class WorkoutScreen extends StatefulWidget {
+class WorkoutMenu extends StatefulWidget {
   @override
-  _WorkoutScreenState createState() => _WorkoutScreenState();
+  _WorkoutMenuState createState() => _WorkoutMenuState();
 }
 
-class _WorkoutScreenState extends State<WorkoutScreen> {
+class _WorkoutMenuState extends State<WorkoutMenu> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -34,7 +35,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       'Push Up',
                       style: GoogleFonts.nunito(
                           textStyle: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
+                              fontSize: 20, fontWeight: FontWeight.w900)),
                     ),
                     SizedBox(
                       height: 15,
@@ -65,7 +66,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 ),
                 color: kPrimaryColor,
                 onPressed: () {
-                  buildConfirmationAlert();
+                  buildPushUpDemo();
                 }),
             WorkoutButton(
                 child: Column(
@@ -75,7 +76,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       'Squat',
                       style: GoogleFonts.nunito(
                           textStyle: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
+                              fontSize: 20, fontWeight: FontWeight.w900)),
                     ),
                     SizedBox(
                       height: 8,
@@ -103,7 +104,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 ),
                 color: kSecondaryColor,
                 onPressed: () {
-                  buildConfirmationAlert();
+                  buildSquatDemo();
                 }),
           ],
         ),
@@ -125,30 +126,156 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
             text: 'Please make sure your surrounding is ',
             style: GoogleFonts.nunito(
                 textStyle:
-                    TextStyle(fontSize: 17, fontWeight: FontWeight.bold))),
+                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
         new TextSpan(
             text: 'Well-Lit',
             style: GoogleFonts.nunito(
                 textStyle:
-                    TextStyle(fontSize: 17, fontWeight: FontWeight.w900))),
+                    TextStyle(fontSize: 19, fontWeight: FontWeight.w900))),
         new TextSpan(
             text: ' & have ',
             style: GoogleFonts.nunito(
                 textStyle:
-                    TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
         new TextSpan(
             text: 'Ample Physical Space',
             style: GoogleFonts.nunito(
                 textStyle:
-                    TextStyle(fontSize: 16, fontWeight: FontWeight.w900))),
+                    TextStyle(fontSize: 19, fontWeight: FontWeight.w900))),
         new TextSpan(
             text: ' for this feature.\n\nDo you wish to start now?',
             style: GoogleFonts.nunito(
                 textStyle:
-                    TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
       ],
     ),
   );
+
+  Future buildSquatDemo() {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            insetPadding: EdgeInsets.all(12),
+            contentPadding: EdgeInsets.fromLTRB(24, 20, 24, 0),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            title: Text(
+              'Squat Demonstration',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.nunito(
+                  textStyle:
+                      TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            ),
+            content: Container(
+              height: 600,
+              width: 320,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    child: Image(
+                      image: AssetImage('assets/images/squat.gif'),
+                    ),
+                  ),
+                  Container(
+                      child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 100, 20, 0),
+                    child: MaterialButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      elevation: 5,
+                      color: kPrimaryColor,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 8),
+                        child: Text('Next',
+                            style: GoogleFonts.nunito(
+                                textStyle: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white))),
+                      ),
+                      onPressed: () async {
+                        setState(() {
+                          //NO Action
+                          Navigator.pop(context);
+                          buildConfirmationAlert();
+                        });
+                      },
+                    ),
+                  ))
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
+  Future buildPushUpDemo() {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            insetPadding: EdgeInsets.all(12),
+            contentPadding: EdgeInsets.fromLTRB(24, 20, 24, 0),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            title: Text(
+              'Push Up Demonstration',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.nunito(
+                  textStyle:
+                      TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            ),
+            content: Container(
+              height: 600,
+              width: 320,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 90,
+                  ),
+                  Container(
+                    child: Image(
+                      image: AssetImage('assets/images/pushup.gif'),
+                    ),
+                  ),
+                  Container(
+                      child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 228, 20, 0),
+                    child: MaterialButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      elevation: 5,
+                      color: kPrimaryColor,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 8),
+                        child: Text('Next',
+                            style: GoogleFonts.nunito(
+                                textStyle: TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white))),
+                      ),
+                      onPressed: () async {
+                        setState(() {
+                          //NO Action
+                          Navigator.pop(context);
+                          buildConfirmationAlert();
+                        });
+                      },
+                    ),
+                  ))
+                ],
+              ),
+            ),
+          );
+        });
+  }
 
   Future buildConfirmationAlert() {
     return showDialog(
@@ -165,7 +292,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   child: Text('NO',
                       style: GoogleFonts.nunito(
                           textStyle: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.bold))),
+                              fontSize: 15, fontWeight: FontWeight.bold))),
                   onPressed: () async {
                     setState(() {
                       //NO Action
@@ -173,24 +300,22 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                     });
                   },
                 ),
-                SizedBox(
-                  width: 30,
-                ),
+                SizedBox(width: 30),
                 MaterialButton(
                   elevation: 5.0,
                   color: kPrimaryColor,
                   child: Text('YES',
                       style: GoogleFonts.nunito(
                           textStyle: TextStyle(
-                              fontSize: 14, fontWeight: FontWeight.bold))),
+                              fontSize: 15, fontWeight: FontWeight.bold))),
                   onPressed: () async {
                     setState(() {
-                      //YES Action
+                      //NO Action
                       Navigator.pop(context);
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ExperimentScreen(),
+                          builder: (context) => WorkoutCalibration(),
                         ),
                       );
                     });
