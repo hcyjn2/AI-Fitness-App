@@ -3,8 +3,9 @@ import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:fitness_app/constants.dart';
 import 'package:fitness_app/screens/scoreboard.dart';
 import 'package:fitness_app/screens/main_menu.dart';
+import 'package:fitness_app/screens/workout_calibration.dart';
 import 'package:fitness_app/screens/workout_menu.dart';
-import 'package:fitness_app/services/workout/classification/pose_sample.dart';
+import 'package:fitness_app/screens/workout_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -44,44 +45,74 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIOverlays([]);
+    WidgetsFlutterBinding.ensureInitialized();
+    SystemChrome.setPreferredOrientations(
+        [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
     //Starting point of the app will be the WelcomeScreen. if user is logged in then the starting screen is MainMenuScreen().
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        body: Container(
-          child: listWidgets[pageIndex],
+        debugShowCheckedModeBanner: false,
+        home: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/background.png"),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: Container(
+              child: listWidgets[pageIndex],
+            ),
+            bottomNavigationBar: ConvexAppBar(
+              backgroundColor: kPrimaryColor,
+              activeColor: kSecondaryColor,
+              items: [
+                TabItem(
+                  icon: Icon(
+                    FontAwesomeIcons.dumbbell,
+                    color: Colors.white,
+                  ),
+                ),
+                TabItem(
+                  icon: Icon(
+                    FontAwesomeIcons.home,
+                    color: Colors.white,
+                  ),
+                ),
+                TabItem(
+                  icon: Icon(
+                    FontAwesomeIcons.trophy,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+              initialActiveIndex: pageIndex,
+              onTap: (int i) {
+                setState(() {
+                  pageIndex = i;
+                });
+              },
+            ),
+          ),
         ),
-        bottomNavigationBar: ConvexAppBar(
-          backgroundColor: kPrimaryColor,
-          activeColor: kSecondaryColor,
-          items: [
-            TabItem(
-              icon: Icon(
-                FontAwesomeIcons.dumbbell,
-                color: Colors.white,
+        onGenerateRoute: (settings) {
+          if (settings.name == '/workoutcalibration') {
+            return MaterialPageRoute(
+              builder: (context) => WorkoutCalibration(
+                (settings.arguments is PoseClass)
+                    ? settings.arguments as PoseClass
+                    : PoseClass.classSquat,
               ),
-            ),
-            TabItem(
-              icon: Icon(
-                FontAwesomeIcons.home,
-                color: Colors.white,
+            );
+          } else if (settings.name == '/workoutsession') {
+            return MaterialPageRoute(
+              builder: (context) => WorkoutSession(
+                (settings.arguments is PoseClass)
+                    ? settings.arguments as PoseClass
+                    : PoseClass.classSquat,
               ),
-            ),
-            TabItem(
-              icon: Icon(
-                FontAwesomeIcons.chartBar,
-                color: Colors.white,
-              ),
-            ),
-          ],
-          initialActiveIndex: pageIndex, //optional, default as 0
-          onTap: (int i) {
-            setState(() {
-              pageIndex = i;
-            });
-          },
-        ),
-      ),
-    );
+            );
+          }
+        });
   }
 }

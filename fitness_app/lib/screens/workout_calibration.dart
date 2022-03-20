@@ -1,13 +1,15 @@
 import 'package:camera/camera.dart';
 import 'package:fitness_app/constants.dart';
 import 'package:fitness_app/main.dart';
-import 'package:fitness_app/screens/workout_session.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'dart:math' as math;
 
 class WorkoutCalibration extends StatefulWidget {
+  final PoseClass poseClass;
+
+  WorkoutCalibration(this.poseClass);
+
   @override
   _WorkoutCalibrationState createState() => _WorkoutCalibrationState();
 }
@@ -26,7 +28,8 @@ class _WorkoutCalibrationState extends State<WorkoutCalibration> {
     future = _getFuture();
 
     accelerometerEvents.listen((AccelerometerEvent event) {
-      setState(() {
+      if(mounted){
+        setState(() {
         double x = event.x, y = event.y, z = event.z;
         double norm_Of_g = math
             .sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
@@ -43,16 +46,16 @@ class _WorkoutCalibrationState extends State<WorkoutCalibration> {
           angleCalibrated = false;
         }
 
-        if (xInclination.round() < -15) {
+        if (xInclination.round() < -5) {
           instructionText = 'Rotate right';
           _resetCalibration();
-        } else if (xInclination.round() > 15) {
+        } else if (xInclination.round() > 5) {
           instructionText = 'Rotate left';
           _resetCalibration();
-        } else if (zInclination.round() < -15) {
+        } else if (zInclination.round() < -3) {
           instructionText = 'Tilt Up';
           _resetCalibration();
-        } else if (zInclination.round() > 15) {
+        } else if (zInclination.round() > 10) {
           instructionText = 'Tilt Down';
           _resetCalibration();
         } else {
@@ -65,7 +68,7 @@ class _WorkoutCalibrationState extends State<WorkoutCalibration> {
           ;
         }
       });
-    });
+    }});
   }
 
   _getFuture() async {
@@ -97,11 +100,11 @@ class _WorkoutCalibrationState extends State<WorkoutCalibration> {
                               horizontal: 20, vertical: 12),
                           child: Text(
                             instructionText,
-                            style: GoogleFonts.nunito(
-                                textStyle: TextStyle(
+                            style: TextStyle(
+                                fontFamily: 'nunito',
                                     fontSize: 30,
                                     color: Colors.white,
-                                    fontWeight: FontWeight.w900)),
+                                    fontWeight: FontWeight.w900),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -137,21 +140,20 @@ class _WorkoutCalibrationState extends State<WorkoutCalibration> {
                           height: 60,
                           child: Text(
                             '   Next   ',
-                            style: GoogleFonts.nunito(
-                                textStyle: TextStyle(
+                            style: TextStyle(
+                                fontFamily: 'nunito',
                                     fontSize: 30,
                                     color: angleCalibrated
                                         ? Colors.white
                                         : Colors.white30,
-                                    fontWeight: FontWeight.bold)),
+                                    fontWeight: FontWeight.bold),
                           ),
                           onPressed: () async {
                             if (angleCalibrated) {
-                              Navigator.push(
+                              Navigator.pushNamed(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => WorkoutSession(),
-                                ),
+                                '/workoutsession',
+                                arguments: widget.poseClass
                               );
                             }
                           })

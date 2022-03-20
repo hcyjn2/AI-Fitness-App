@@ -1,8 +1,6 @@
-import 'package:fitness_app/screens/workout_calibration.dart';
-import 'package:fitness_app/screens/workout_session.dart';
 import 'package:fitness_app/widgets/custom_card.dart';
+import 'package:fitness_app/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../constants.dart';
 
@@ -16,10 +14,16 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.91,
+      height: MediaQuery.of(context).size.height * 0.915,
       width: MediaQuery.of(context).size.width * 0.995,
       child: CustomCard(
-        color: kSecondaryColor.withOpacity(0.65),
+        boxShadow: BoxShadow(
+          color: kSecondaryColor.withOpacity(0.5),
+          spreadRadius: 5,
+          blurRadius: 7,
+          offset: Offset(0, 3), // changes position of shadow
+        ),
+        color: kSecondaryColor.withOpacity(0.39),
         child: GridView.count(
           primary: false,
           padding: const EdgeInsets.all(20),
@@ -27,85 +31,177 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
           mainAxisSpacing: 20,
           crossAxisCount: 2,
           children: <Widget>[
-            WorkoutButton(
+            CustomElevatedButton(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.all(5.2),
+                      child: Image(
+                        image: AssetImage('assets/images/pushUp.png'),
+                        height: 50,
+                      ),
+                    ),
                     Text(
-                      'Push Up',
-                      style: GoogleFonts.nunito(
-                          textStyle: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w900)),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Image(
-                      image: AssetImage('assets/images/pushUp.png'),
-                      height: 45,
-                    ),
-                    SizedBox(
-                      height: 10,
+                      'PUSH UP',
+                      style: TextStyle(
+                          fontFamily: 'nunito',
+                          fontSize: 21,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white),
                     ),
                     Row(
                       children: [
+                        SizedBox(
+                          width: 5,
+                        ),
                         Image(
                           image: AssetImage('assets/images/chest.png'),
                           height: 40,
                         ),
                         SizedBox(
-                          width: 15,
+                          width: 40,
                         ),
                         Image(
-                          image: AssetImage('assets/images/easy.png'),
-                          height: 20,
+                          image: AssetImage('assets/images/Resistance.png'),
+                          height: 32,
                         ),
                       ],
                     ),
+                    Image(
+                      image: AssetImage('assets/images/easy.png'),
+                      height: 22,
+                    ),
                   ],
                 ),
-                color: kPrimaryColor,
+                gradient: LinearGradient(
+                    colors: [kPrimaryColor, kAccentColor],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight),
+                borderRadius: BorderRadius.circular(14.0),
+                boxShadow: BoxShadow(
+                  color: Colors.black26,
+                  spreadRadius: 2.5,
+                  blurRadius: 7,
+                  offset: Offset(0, 5), // changes position of shadow
+                ),
                 onPressed: () {
                   buildPushUpDemo();
                 }),
-            WorkoutButton(
+            CustomElevatedButton(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.all(3.0),
+                      child: Image(
+                        image: AssetImage('assets/images/squat.png'),
+                        height: 55,
+                      ),
+                    ),
                     Text(
-                      'Squat',
-                      style: GoogleFonts.nunito(
-                          textStyle: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w900)),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Image(
-                      image: AssetImage('assets/images/squat.png'),
-                      height: 60,
+                      'SQUAT',
+                      style: TextStyle(
+                          fontFamily: 'nunito',
+                          fontSize: 21,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white),
                     ),
                     Row(
                       children: [
+                        SizedBox(
+                          width: 5,
+                        ),
                         Image(
-                          image: AssetImage('assets/images/hamstrings.png'),
+                          image: AssetImage('assets/images/quad.png'),
                           height: 40,
                         ),
                         SizedBox(
-                          width: 15,
+                          width: 40,
                         ),
                         Image(
-                          image: AssetImage('assets/images/easy.png'),
-                          height: 20,
+                          image: AssetImage('assets/images/Resistance.png'),
+                          height: 32,
                         ),
                       ],
                     ),
+                    Image(
+                      image: AssetImage('assets/images/easy.png'),
+                      height: 22,
+                    ),
                   ],
                 ),
-                color: kSecondaryColor,
+                gradient: LinearGradient(
+                    colors: [kPrimaryColor, kAccentColor],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight),
+                borderRadius: BorderRadius.circular(14.0),
+                boxShadow: BoxShadow(
+                  color: Colors.black26,
+                  spreadRadius: 2.5,
+                  blurRadius: 7,
+                  offset: Offset(0, 5), // changes position of shadow
+                ),
                 onPressed: () {
                   buildSquatDemo();
                 }),
+            CustomElevatedButton(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Image(
+                        image: AssetImage('assets/images/jumpingJack.png'),
+                        height: 55,
+                      ),
+                    ),
+                    Text(
+                      'JUMPING JACK',
+                      style: TextStyle(
+                          fontFamily: 'nunito',
+                          fontSize: 15.9,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white),
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Image(
+                          image: AssetImage('assets/images/calf.png'),
+                          height: 40,
+                        ),
+                        SizedBox(
+                          width: 40,
+                        ),
+                        Image(
+                          image: AssetImage('assets/images/Cardio.png'),
+                          height: 32,
+                        ),
+                      ],
+                    ),
+                    Image(
+                      image: AssetImage('assets/images/easy.png'),
+                      height: 22,
+                    ),
+                  ],
+                ),
+                gradient: LinearGradient(
+                    colors: [kPrimaryColor, kAccentColor],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight),
+                borderRadius: BorderRadius.circular(14.0),
+                boxShadow: BoxShadow(
+                  color: Colors.black26,
+                  spreadRadius: 2.5,
+                  blurRadius: 7,
+                  offset: Offset(0, 5), // changes position of shadow
+                ),
+                onPressed: () {
+                  buildSquatDemo();
+                })
           ],
         ),
       ),
@@ -124,29 +220,19 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
       children: <TextSpan>[
         new TextSpan(
             text: 'Please make sure your surrounding is ',
-            style: GoogleFonts.nunito(
-                textStyle:
-                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
-        new TextSpan(
-            text: 'Well-Lit',
-            style: GoogleFonts.nunito(
-                textStyle:
-                    TextStyle(fontSize: 19, fontWeight: FontWeight.w900))),
+            style:
+                workoutStartMessageStyle.copyWith(fontWeight: FontWeight.bold)),
+        new TextSpan(text: 'Well-Lit', style: workoutStartMessageStyle),
         new TextSpan(
             text: ' & have ',
-            style: GoogleFonts.nunito(
-                textStyle:
-                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+            style:
+                workoutStartMessageStyle.copyWith(fontWeight: FontWeight.bold)),
         new TextSpan(
-            text: 'Ample Physical Space',
-            style: GoogleFonts.nunito(
-                textStyle:
-                    TextStyle(fontSize: 19, fontWeight: FontWeight.w900))),
+            text: 'Ample Physical Space', style: workoutStartMessageStyle),
         new TextSpan(
             text: ' for this feature.\n\nDo you wish to start now?',
-            style: GoogleFonts.nunito(
-                textStyle:
-                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+            style:
+                workoutStartMessageStyle.copyWith(fontWeight: FontWeight.bold)),
       ],
     ),
   );
@@ -156,16 +242,17 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            insetPadding: EdgeInsets.all(12),
-            contentPadding: EdgeInsets.fromLTRB(24, 20, 24, 0),
+            contentPadding: EdgeInsets.fromLTRB(24, 10, 24, 0),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             title: Text(
               'Squat Demonstration',
               textAlign: TextAlign.center,
-              style: GoogleFonts.nunito(
-                  textStyle:
-                      TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              style: TextStyle(
+                  fontFamily: 'nunito',
+                  fontSize: 23,
+                  fontWeight: FontWeight.w900,
+                  color: kPrimaryColor),
             ),
             content: Container(
               height: 600,
@@ -173,16 +260,39 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: 10,
+                    height: 5,
                   ),
                   Container(
-                    child: Image(
-                      image: AssetImage('assets/images/squat.gif'),
-                    ),
+                    child: Column(children: [
+                      Image(
+                        image: AssetImage('assets/images/squat.gif'),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        'Tips',
+                        style: TextStyle(
+                            fontFamily: 'nunito',
+                            decoration: TextDecoration.underline,
+                            decorationThickness: 3,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                            color: kPrimaryColor),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                          '\u00b7 Hip should be on the same level / lower than your knees.',
+                          style: TextStyle(
+                              fontFamily: 'nunito',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w900,
+                              color: kPrimaryColor))
+                    ]),
                   ),
                   Container(
                       child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 100, 20, 0),
+                    padding: const EdgeInsets.fromLTRB(20, 60, 20, 0),
                     child: MaterialButton(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15)),
@@ -192,17 +302,17 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 8),
                         child: Text('Next',
-                            style: GoogleFonts.nunito(
-                                textStyle: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white))),
+                            style: TextStyle(
+                                fontFamily: 'nunito',
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
                       ),
                       onPressed: () async {
                         setState(() {
                           //NO Action
                           Navigator.pop(context);
-                          buildConfirmationAlert();
+                          buildConfirmationAlert(PoseClass.classSquat);
                         });
                       },
                     ),
@@ -219,16 +329,17 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            insetPadding: EdgeInsets.all(12),
-            contentPadding: EdgeInsets.fromLTRB(24, 20, 24, 0),
+            contentPadding: EdgeInsets.fromLTRB(24, 10, 24, 0),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             title: Text(
               'Push Up Demonstration',
               textAlign: TextAlign.center,
-              style: GoogleFonts.nunito(
-                  textStyle:
-                      TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              style: TextStyle(
+                  fontFamily: 'nunito',
+                  fontSize: 23,
+                  fontWeight: FontWeight.w900,
+                  color: kPrimaryColor),
             ),
             content: Container(
               height: 600,
@@ -239,13 +350,36 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
                     height: 90,
                   ),
                   Container(
-                    child: Image(
-                      image: AssetImage('assets/images/pushup.gif'),
-                    ),
+                    child: Column(children: [
+                      Image(
+                        image: AssetImage('assets/images/pushup.gif'),
+                      ),
+                      SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        'Tips',
+                        style: TextStyle(
+                            fontFamily: 'nunito',
+                            decoration: TextDecoration.underline,
+                            decorationThickness: 3,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                            color: kPrimaryColor),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                          '\u00b7 Hip and Back should be Straight instead of Slouching. \n \u00b7 Chest should touch or almost touch the ground.',
+                          style: TextStyle(
+                              fontFamily: 'nunito',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w900,
+                              color: kPrimaryColor))
+                    ]),
                   ),
                   Container(
                       child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 228, 20, 0),
+                    padding: const EdgeInsets.fromLTRB(20, 120, 20, 0),
                     child: MaterialButton(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15)),
@@ -255,17 +389,17 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20, vertical: 8),
                         child: Text('Next',
-                            style: GoogleFonts.nunito(
-                                textStyle: TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white))),
+                            style: TextStyle(
+                                fontFamily: 'nunito',
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
                       ),
                       onPressed: () async {
                         setState(() {
                           //NO Action
                           Navigator.pop(context);
-                          buildConfirmationAlert();
+                          buildConfirmationAlert(PoseClass.classPushUp);
                         });
                       },
                     ),
@@ -277,7 +411,7 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
         });
   }
 
-  Future buildConfirmationAlert() {
+  Future buildConfirmationAlert(PoseClass poseClass) {
     return showDialog(
         context: context,
         builder: (context) {
@@ -290,9 +424,10 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
                   elevation: 5.0,
                   color: Colors.grey,
                   child: Text('NO',
-                      style: GoogleFonts.nunito(
-                          textStyle: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold))),
+                      style: TextStyle(
+                          fontFamily: 'nunito',
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold)),
                   onPressed: () async {
                     setState(() {
                       //NO Action
@@ -305,18 +440,18 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
                   elevation: 5.0,
                   color: kPrimaryColor,
                   child: Text('YES',
-                      style: GoogleFonts.nunito(
-                          textStyle: TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.bold))),
+                      style: TextStyle(
+                          fontFamily: 'nunito',
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold)),
                   onPressed: () async {
                     setState(() {
                       //NO Action
                       Navigator.pop(context);
-                      Navigator.push(
+                      Navigator.pushNamed(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => WorkoutCalibration(),
-                        ),
+                        '/workoutcalibration',
+                        arguments: poseClass,
                       );
                     });
                   },
@@ -328,17 +463,27 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
   }
 }
 
+TextStyle workoutStartMessageStyle =
+    TextStyle(fontFamily: 'nunito', fontSize: 19, fontWeight: FontWeight.w900);
+
 class WorkoutButton extends StatelessWidget {
   final Widget child;
   final Color color;
   final VoidCallback? onPressed;
+  final double elevation;
 
-  WorkoutButton({required this.child, required this.color, this.onPressed});
+  WorkoutButton(
+      {required this.child,
+      required this.color,
+      this.onPressed,
+      this.elevation = 10.0});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ButtonStyle(
+        enableFeedback: true,
+        elevation: MaterialStateProperty.resolveWith((states) => elevation),
         backgroundColor: MaterialStateColor.resolveWith((states) => color),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(

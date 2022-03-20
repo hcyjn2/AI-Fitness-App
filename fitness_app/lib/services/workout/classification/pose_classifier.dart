@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:fitness_app/constants.dart';
 import 'package:fitness_app/services/workout/classification/classification_result.dart';
 import 'package:fitness_app/services/workout/classification/pose_embedding.dart';
 import 'package:fitness_app/services/workout/classification/pose_sample.dart';
@@ -9,27 +10,31 @@ import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:tuple/tuple.dart';
 
 const tag = "PoseClassifier";
-const defaultMaxDistanceTopK = 30;
+// "Smaller amount indicates better Sensitivity and Vice Versa"
+const defaultMaxDistanceTopK = 29;
+// "Smaller amount indicates lesser Sensitivity and Vice Versa"
 const defaultMeanDistanceTopK = 10;
 
 class PoseClassifier {
-  // Note Z has a lower weight as it is generally less accurate than X & Y.
-  // private static final PoseLandmark AXES_WEIGHTS = PointF3D.from(1, 1, 0.2f);
   final List<PoseSample> __poseSamples;
   final int __maxDistanceTopK;
   final int __meanDistanceTopK;
   late final PoseLandmark __axesWeights;
+  final PoseClass __poseClass;
 
   PoseClassifier(
-    this.__poseSamples, [
+    this.__poseSamples, this.__poseClass,[
     this.__maxDistanceTopK = defaultMaxDistanceTopK,
     this.__meanDistanceTopK = defaultMeanDistanceTopK,
   ]) {
+
+    // Z has a lower weight as it is generally less accurate than X & Y.
     __axesWeights = PoseLandmark(PoseLandmarkType.nose, 1, 1, 0.2, 1);
   }
 
   PoseClassifier.named(
     this.__poseSamples,
+    this.__poseClass,
     this.__axesWeights, [
     this.__maxDistanceTopK = defaultMaxDistanceTopK,
     this.__meanDistanceTopK = defaultMeanDistanceTopK,
@@ -43,37 +48,54 @@ class PoseClassifier {
     return landmarks;
   }
 
+
   /**
    * Returns the max range of confidence values.
    *
-   * <p><Since we calculate confidence by counting {@link PoseSample}s that survived
+   * Since we calculate confidence by counting PoseSamples that survived
    * outlier-filtering by maxDistanceTopK and meanDistanceTopK, this range is the minimum of two.
    */
   int confidenceRange() => min(__maxDistanceTopK, __meanDistanceTopK);
 
-  // ClassificationResult classify(Pose pose) {
-  //   return classify(extractPoseLandmarks(pose));
-  // }
-
+  // Classification (Pose as Input)
   ClassificationResult classifyPose(Pose pose) =>
       classify(extractPoseLandmarks(pose));
 
+  // Classification:
   ClassificationResult classify(List<PoseLandmark> landmarks) {
     ClassificationResult result = new ClassificationResult();
+
+    ClassificationResult evaluateAnkleJointAngle(List<PoseLandmark> landmarks, ClassificationResult result)  {
+      int leftKneeJoint = PoseEmbedding.getJointAngle(landmarks.elementAt(PoseLandmarkType.leftHip.index), landmarks.elementAt(PoseLandmarkType.leftKnee.index), landmarks.elementAt(PoseLandmarkType.leftAnkle.index));
+      int rightKneeJoint = PoseEmbedding.getJointAngle(landmarks.elementAt(PoseLandmarkType.rightHip.index), landmarks.elementAt(PoseLandmarkType.rightKnee.index), landmarks.elementAt(PoseLandmarkType.rightAnkle.index));
+      int leftAnkleJoint = PoseEmbedding.getJointAngle(landmarks.elementAt(PoseLandmarkType.leftKnee.index), landmarks.elementAt(PoseLandmarkType.leftAnkle.index), landmarks.elementAt(PoseLandmarkType.leftFootIndex.index));
+      int rightAnkleJoint = PoseEmbedding.getJointAngle(landmarks.elementAt(PoseLandmarkType.rightKnee.index), landmarks.elementAt(PoseLandmarkType.rightAnkle.index), landmarks.elementAt(PoseLandmarkType.rightFootIndex.index));
+
+      // Able to identify the angles but not consistently
+      if(leftAnkleJoint > 177 && leftAnkleJoint <= 195 && rightAnkleJoint <= 180 && leftKneeJoint >= 172 && leftKneeJoint <= 185 &&  rightKneeJoint >= 172 && rightKneeJoint <= 185){
+        print('*************************JUMPSQUAT DOWN***************************');
+        result.incrementClassConfidence('jumpsquats_down');
+      }
+
+      return result;
+    }
+
+
     // Return early if no landmarks detected.
     if (landmarks.isEmpty) {
       return result;
     }
 
-    // We do flipping on X-axis so we are horizontal (mirror) invariant.
+    // Flipping on X-axis so that we are horizontal (mirror) invariant.
     List<PoseLandmark> flippedLandmarks = landmarks;
     for (var lm in flippedLandmarks) {
       Utils.multiply(lm, PoseLandmark(lm.type, -1, 1, 1, lm.likelihood));
     }
 
-    List<PoseLandmark> embedding = PoseEmbedding.getPoseEmbedding(landmarks);
+    // TODO
+    List<PoseLandmark> embedding = PoseEmbedding.getPoseEmbedding(landmarks, __poseClass);
     List<PoseLandmark> flippedEmbedding =
-        PoseEmbedding.getPoseEmbedding(flippedLandmarks);
+        PoseEmbedding.getPoseEmbedding(flippedLandmarks, __poseClass);
 
     // Classification is done in two stages:
     //  * First we pick top-K samples by MAX distance. It allows to remove samples that are almost
@@ -152,10 +174,14 @@ class PoseClassifier {
       }
     }
 
+    // Increase Class Confidence based on the filtered mean distances.
     for (Tuple2<PoseSample, double> sampleDistances in meanDistances.toList()) {
       String className = sampleDistances.item1.className;
+
       result.incrementClassConfidence(className);
     }
+
+    result = evaluateAnkleJointAngle(landmarks, result);
 
     return result;
   }

@@ -1,11 +1,11 @@
 import 'package:fitness_app/services/workout/classification/classification_result.dart';
 
+// These thresholds can be tuned in conjunction with the Top K values in {@link PoseClassifier}.
+// The default Top K value is 10 so the range here is [0-10].
 const defaultEnterThreshold = 6.0;
 const defaultExitThreshold = 4.0;
 
 class RepetitionCounter {
-  // These thresholds can be tuned in conjunction with the Top K values in {@link PoseClassifier}.
-  // The default Top K value is 10 so the range here is [0-10].
   final String __className;
   final double __enterThreshold;
   final double __exitThreshold;
@@ -28,6 +28,8 @@ class RepetitionCounter {
   int addClassificationResult(ClassificationResult classificationResult) {
     double poseConfidence =
         classificationResult.getClassConfidence(__className) ?? 0;
+
+    // print(__className + ' : ' + poseConfidence.toString());
 
     if (!__poseEntered) {
       __poseEntered = poseConfidence > __enterThreshold;

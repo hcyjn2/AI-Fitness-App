@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 
+import 'package:fitness_app/constants.dart';
 import 'package:fitness_app/services/workout/classification/pose_embedding.dart';
 import 'package:flutter/services.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
@@ -19,10 +20,11 @@ class PoseSample {
   final String __name;
   final String __className;
   final List<PoseLandmark> __landmarks;
+  final PoseClass __poseClass;
   List<PoseLandmark> __embedding = [];
 
-  PoseSample(this.__name, this.__className, this.__landmarks) {
-    __embedding = PoseEmbedding.getPoseEmbedding(__landmarks);
+  PoseSample(this.__name, this.__className, this.__landmarks, this.__poseClass) {
+    __embedding = PoseEmbedding.getPoseEmbedding(__landmarks, this.__poseClass);
   }
 
   String get name => __name;
@@ -31,13 +33,22 @@ class PoseSample {
 
   List<PoseLandmark> get embedding => __embedding;
 
-  //#TODO Might be wrong
-  static Future<List<String>> readCSV() async {
+  static Future<List<String>> readCSV(PoseClass poseClass) async {
+    String dataDirectory = '';
+    // String dataDirectory = 'assets/data/fitness_pose_samples.csv';
+
+    if(poseClass == PoseClass.classPushUp){
+      dataDirectory = 'assets/data/pushup_samples.csv';
+    }else if(poseClass == PoseClass.classJumpSquat || poseClass == PoseClass.classSquat){
+      dataDirectory = 'assets/data/squat_samples.csv';
+    }
+
     var csv = await rootBundle
-        .loadString('assets/data/fitness_pose_samples.csv')
+        .loadString(dataDirectory)
         .asStream()
         .transform(new LineSplitter())
         .toList();
+
     return csv;
   }
 
@@ -47,6 +58,7 @@ class PoseSample {
     String name = row[0];
     String className = row[1];
     List<PoseLandmark> landmarks = [];
+    PoseClass poseClass = classIdentifierToPoseClass(className);
 
     if (row.length != (numOfLandmarks * numOfDims) + 2) {
       // Log.e(tag, "Invalid number of tokens for PoseSample");
@@ -77,76 +89,6 @@ class PoseSample {
       }
     }
 
-    return new PoseSample(name, className, landmarks);
+    return new PoseSample(name, className, landmarks, poseClass);
   }
-
-// static Future<PoseSample> getPoseSample(
-//     String csvLine, String separator) async {
-//   var row = await readCSV();
-//
-//   String name = row[0];
-//   String className = row[1];
-//   List<PoseLandmark> landmarks = [];
-//
-//   if (row != (numOfLandmarks * numOfDims) + 2) {
-//     // Log.e(tag, "Invalid number of tokens for PoseSample");
-//     print(tag + "Invalid number of tokens for PoseSample");
-//     exit(1);
-//   }
-//
-//   for (int i = 2; i < row.length; i += numOfDims) {
-//     try {
-//       landmarks.add(PoseLandmark(
-//           PoseLandmarkType.values.elementAt(i - 2),
-//           double.parse(row[i]),
-//           double.parse(row[i + 1]),
-//           double.parse(row[i + 2]),
-//           0));
-//     } catch (e) {
-//       // Log.e(tag, "Invalid value " + tokens.get(i) + " for landmark position.");
-//       print(e.toString() +
-//           '\n\n' +
-//           tag +
-//           "Invalid value " +
-//           row[i] +
-//           " for landmark position.");
-//       exit(2);
-//     }
-//   }
-//
-//   return new PoseSample(name, className, landmarks);
-// }
-
-  // List<String> tokens = csvLine.split(separator);
-  // // Format is expected to be Name,Class,X1,Y1,Z1,X2,Y2,Z2...
-  // // + 2 is for Name & Class.
-  // if (tokens.length != (numOfLandmarks * numOfDims) + 2) {
-  //   // Log.e(tag, "Invalid number of tokens for PoseSample");
-  //   print(tag + "Invalid number of tokens for PoseSample");
-  //   exit(1);
-  // }
-  // String name = tokens.elementAt(0);
-  // String className = tokens.elementAt(1);
-  // List<PoseLandmark> landmarks = [];
-  //
-  // //#TODO line48 might not be 0 but the likelihood of the landmark
-  // // Read from the third token, first 2 tokens are name and class.
-  // for (int i = 2; i < tokens.length; i += numOfDims) {
-  //   try {
-  //     landmarks.add(PoseLandmark(
-  //         PoseLandmarkType.values.elementAt(i - 2),
-  //         double.parse(tokens.elementAt(i)),
-  //         double.parse(tokens.elementAt(i + 1)),
-  //         double.parse(tokens.elementAt(i + 2)),
-  //         0));
-  //   } on NullThrownError {
-  //     // Log.e(tag, "Invalid value " + tokens.get(i) + " for landmark position.");
-  //     print(tag +
-  //         "Invalid value " +
-  //         tokens.elementAt(i) +
-  //         " for landmark position.");
-  //     exit(2);
-  //   }
-  // }
-
 }

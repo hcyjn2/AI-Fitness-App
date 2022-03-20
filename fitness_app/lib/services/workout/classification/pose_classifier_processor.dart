@@ -13,15 +13,9 @@ import 'package:fitness_app/constants.dart';
 import 'package:soundpool/soundpool.dart';
 
 const tag = "PoseClassifierProcessor";
-const poseSamplesFile = "fitness_pose_samples.csv";
 
 class PoseClassifierProcessor {
-  // Specify classes for which we want rep counting.
-  // These are the labels in the given {@code POSE_SAMPLES_FILE}. You can set your own class labels
-  // for your pose samples.
-
-  final bool __isStreamMode;
-
+  bool __isStreamMode;
   late EMASmoothing __emaSmoothing;
   late List<RepetitionCounter> __repCounters;
   late PoseClassifier __poseClassifier;
@@ -29,8 +23,9 @@ class PoseClassifierProcessor {
   late List<PoseSample> __poseSamples;
   late List<String> resultClass;
   late List<int> resultRep;
+  final PoseClass __poseClass;
 
-  PoseClassifierProcessor(this.__isStreamMode, this.__poseSamples) {
+  PoseClassifierProcessor(this.__isStreamMode, this.__poseSamples, this.__poseClass) {
     if (__isStreamMode) {
       __emaSmoothing = new EMASmoothing();
       __repCounters = [];
@@ -38,7 +33,7 @@ class PoseClassifierProcessor {
       resultClass = [];
       resultRep = [];
 
-      __poseClassifier = new PoseClassifier(__poseSamples);
+      __poseClassifier = new PoseClassifier(__poseSamples, __poseClass);
 
       for (String className in poseClasses) {
         __repCounters.add(new RepetitionCounter(className));
@@ -49,12 +44,12 @@ class PoseClassifierProcessor {
   void loadPoseSamples() async {
     List<PoseSample> poseSamples = [];
 
-    List<String> csvData = await PoseSample.readCSV();
+    List<String> csvData = await PoseSample.readCSV(__poseClass);
 
     for (var row in csvData)
       poseSamples.add(await PoseSample.getPoseSample(row));
 
-    __poseClassifier = new PoseClassifier(__poseSamples);
+    __poseClassifier = new PoseClassifier(__poseSamples, __poseClass);
 
     if (__isStreamMode) {
       for (String className in poseClasses) {
@@ -101,13 +96,14 @@ class PoseClassifierProcessor {
         int repsBefore = repCounter.numRepeats;
         int repsAfter = repCounter.addClassificationResult(classification);
         if (repsAfter > repsBefore) {
-          // Play a fun beep when rep counter updates.
+          // Play a Ding sound when rep counter updates.
           int soundId = await rootBundle
               .load("assets/audios/ding.mp3")
               .then((ByteData soundData) {
             return pool.load(soundData);
           });
-          int streamId = await pool.play(soundId);
+
+          await pool.play(soundId);
 
           resultClass.add(repCounter.className);
           resultRep.add(repsAfter);
@@ -119,18 +115,18 @@ class PoseClassifierProcessor {
         }
       }
       classificationResult.add(__lastRepResult);
-    }
 
-    // Add maxConfidence class of current frame to result if pose is found.
-    if (pose.landmarks.isNotEmpty) {
-      String maxConfidenceClass = classification.getMaxConfidenceClass();
-      String maxConfidenceClassResult = (maxConfidenceClass +
-          ' : ' +
-          (classification.getClassConfidence(maxConfidenceClass)! /
-                  __poseClassifier.confidenceRange())
-              .toString() +
-          ' confidence');
-      classificationResult.add(maxConfidenceClassResult);
+      // Add maxConfidence class of current frame to result if pose is found.
+      if (pose.landmarks.isNotEmpty) {
+        String maxConfidenceClass = classification.getMaxConfidenceClass();
+        String maxConfidenceClassResult = (maxConfidenceClass +
+            ' : ' +
+            (classification.getClassConfidence(maxConfidenceClass)! /
+                __poseClassifier.confidenceRange())
+                .toString() +
+            ' confidence');
+        classificationResult.add(maxConfidenceClassResult);
+      }
     }
 
     resultTuple.item1.addAll(classificationResult);
@@ -138,5 +134,9 @@ class PoseClassifierProcessor {
     resultTuple.item3.addAll(resultRep);
 
     return resultTuple;
+  }
+
+  void stop(){
+    __isStreamMode = false;
   }
 }

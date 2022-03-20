@@ -1,11 +1,10 @@
+import 'package:fitness_app/services/workout/classification/best_record.dart';
 import 'package:fitness_app/widgets/custom_card.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../constants.dart';
 
-// Calorie Tracking feature
 class ScoreboardScreen extends StatefulWidget {
   @override
   _ScoreboardScreenState createState() => _ScoreboardScreenState();
@@ -14,6 +13,7 @@ class ScoreboardScreen extends StatefulWidget {
 class _ScoreboardScreenState extends State<ScoreboardScreen> {
   Map<String, int> records = {};
   late Future future;
+  List<BestRecord> _bestRecordList = [];
 
   @override
   void initState() {
@@ -21,37 +21,61 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
     future = _getFuture();
   }
 
-  _getFuture() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var existedRecords = prefs.getKeys();
+  Future _initSaveData() async {
+    for (var classIdentifier in poseClasses)
+      _bestRecordList.add(
+          BestRecord(exerciseClass: classIdentifier, exerciseRepetition: 0));
+  }
 
-    if (existedRecords.isNotEmpty) {
-      for (var record in existedRecords) {
-        records.putIfAbsent(record, () => prefs.getInt(record) ?? 0);
-      }
-    }
+  Future _loadBestRecordData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var counter = await prefs.getInt('counter') ?? 0;
+
+    if (counter < 1) _initSaveData();
+
+    List<BestRecord> decodedData =
+        BestRecord.decode(prefs.get('Best Record List').toString());
+
+    return decodedData;
+  }
+
+  _getFuture() async {
+    _bestRecordList = await _loadBestRecordData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.91,
+      height: MediaQuery.of(context).size.height * 0.915,
       width: MediaQuery.of(context).size.width * 0.995,
       child: CustomCard(
-          color: kSecondaryColor.withOpacity(0.65),
+          boxShadow: BoxShadow(
+            color: kSecondaryColor.withOpacity(0.5),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+          color: kSecondaryColor.withOpacity(0.39),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
-                padding: const EdgeInsets.all(10.0),
+                padding: const EdgeInsets.fromLTRB(25, 10, 0, 10),
                 child: Container(
                   child: Text(
-                    'Scoreboard',
-                    style: GoogleFonts.nunito(
-                        textStyle: TextStyle(
-                            fontSize: 40,
-                            color: Colors.white,
-                            fontWeight: FontWeight.w800)),
+                    '\u00b7 Scoreboard',
+                    style: TextStyle(
+                        shadows: <Shadow>[
+                          Shadow(
+                            offset: Offset(2.5, 2.5),
+                            blurRadius: 8.0,
+                            color: Color.fromARGB(125, 106, 106, 106),
+                          ),
+                        ],
+                        fontFamily: 'nunito',
+                        fontSize: 36,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900),
                   ),
                 ),
               ),
@@ -62,13 +86,14 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
                     if (snapshot.connectionState == ConnectionState.done) {
                       return Container(
                         child: ListView.builder(
-                          itemCount: records.length,
+                          itemCount: _bestRecordList.length,
                           itemBuilder: (context, index) {
                             String className = classIdentifierToClassName(
-                                records.keys.elementAt(index));
-                            String classRepetition =
-                                records.values.elementAt(index).toString();
-
+                                _bestRecordList.elementAt(index).exerciseClass);
+                            String classRepetition = _bestRecordList
+                                .elementAt(index)
+                                .exerciseRepetition
+                                .toString();
                             return Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 3.0, horizontal: 20),
@@ -83,19 +108,19 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
                                   child: ListTile(
                                     title: Text(
                                       className,
-                                      style: GoogleFonts.nunito(
-                                          textStyle: TextStyle(
-                                              fontSize: 20,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold)),
+                                      style: TextStyle(
+                                          fontFamily: 'nunito',
+                                          fontSize: 20,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w900),
                                     ),
                                     trailing: Text(
                                       classRepetition,
-                                      style: GoogleFonts.nunito(
-                                          textStyle: TextStyle(
-                                              fontSize: 24,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold)),
+                                      style: TextStyle(
+                                          fontFamily: 'nunito',
+                                          fontSize: 24,
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w900),
                                     ),
                                   ),
                                 ),
@@ -103,12 +128,21 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
                             );
                           },
                         ),
-                        height: MediaQuery.of(context).size.height * 0.26,
+                        height: MediaQuery.of(context).size.height * 0.65,
                         width: double.infinity,
                         color: Colors.transparent,
                       );
                     } else {
-                      return Text('Loading...');
+                      return Container(
+                          child: Center(
+                              child: Text(
+                        'Loading...',
+                        style: TextStyle(
+                            fontFamily: 'nunito',
+                            fontSize: 20,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      )));
                     }
                   },
                 ),
@@ -126,11 +160,11 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 'Reset Scoreboard',
-                                style: GoogleFonts.nunito(
-                                    textStyle: TextStyle(
-                                        fontSize: 20,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold)),
+                                style: TextStyle(
+                                    fontFamily: 'nunito',
+                                    fontSize: 20,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
                             style: ButtonStyle(

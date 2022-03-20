@@ -5,7 +5,6 @@ import 'package:camera/camera.dart';
 import 'package:fitness_app/constants.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 
 import '../../main.dart';
@@ -19,6 +18,7 @@ class CameraView extends StatefulWidget {
       required this.customPaint,
       required this.onImage,
       required this.state,
+        required this.poseClass,
       this.initialDirection = CameraLensDirection.back})
       : super(key: key);
 
@@ -26,6 +26,7 @@ class CameraView extends StatefulWidget {
   final CustomPaint? customPaint;
   final Function(InputImage inputImage) onImage;
   final CameraLensDirection initialDirection;
+  final PoseClass poseClass;
   int state;
 
   @override
@@ -59,7 +60,7 @@ class _CameraViewState extends State<CameraView> {
       appBar: _state == 1
           ? AppBar(
               backgroundColor: kPrimaryColor,
-              title: Text('Workout Feature'),
+              title: Text(poseClassToString(widget.poseClass)),
               centerTitle: true,
               toolbarHeight: 40,
               actions: [
