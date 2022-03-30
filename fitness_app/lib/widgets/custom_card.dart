@@ -5,8 +5,10 @@ class CustomCard extends StatelessWidget {
   final Color color;
   final Widget? child;
   final BoxShadow? boxShadow;
+  final Border? border;
 
-  CustomCard({Key? key, required this.color, this.child, this.boxShadow})
+  CustomCard(
+      {Key? key, required this.color, this.child, this.boxShadow, this.border})
       : super(key: key);
 
   @override
@@ -15,6 +17,7 @@ class CustomCard extends StatelessWidget {
       child: child,
       margin: EdgeInsets.all(15),
       decoration: BoxDecoration(
+        border: border,
         boxShadow: [
           boxShadow ??
               BoxShadow(

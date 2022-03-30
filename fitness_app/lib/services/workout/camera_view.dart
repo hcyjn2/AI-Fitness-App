@@ -18,7 +18,7 @@ class CameraView extends StatefulWidget {
       required this.customPaint,
       required this.onImage,
       required this.state,
-        required this.poseClass,
+      required this.poseClass,
       this.initialDirection = CameraLensDirection.back})
       : super(key: key);
 
@@ -57,27 +57,34 @@ class _CameraViewState extends State<CameraView> {
     }
 
     return Scaffold(
-      appBar: _state == 1
-          ? AppBar(
-              backgroundColor: kPrimaryColor,
-              title: Text(poseClassToString(widget.poseClass)),
-              centerTitle: true,
-              toolbarHeight: 40,
-              actions: [
-                Padding(
-                  padding: EdgeInsets.only(right: 20.0),
-                  child: GestureDetector(
-                    onTap: _switchLiveCamera,
-                    child: Icon(
-                      Platform.isIOS
-                          ? Icons.flip_camera_ios_outlined
-                          : Icons.flip_camera_android_outlined,
-                    ),
-                  ),
-                ),
-              ],
-            )
-          : null,
+      // appBar: _state == 1
+      //     ? AppBar(
+      //         automaticallyImplyLeading: false,
+      //         backgroundColor: Colors.black.withOpacity(0.7),
+      //         title: Text(
+      //           poseClassToString(widget.poseClass),
+      //           style: TextStyle(
+      //               color: Colors.white,
+      //               fontFamily: 'nunito',
+      //               fontWeight: FontWeight.w900),
+      //         ),
+      //         centerTitle: true,
+      //         toolbarHeight: 35,
+      //         actions: [
+      //           Padding(
+      //             padding: EdgeInsets.only(right: 20.0),
+      //             child: GestureDetector(
+      //               onTap: _switchLiveCamera,
+      //               child: Icon(
+      //                 Platform.isIOS
+      //                     ? Icons.flip_camera_ios_outlined
+      //                     : Icons.flip_camera_android_outlined,
+      //               ),
+      //             ),
+      //           ),
+      //         ],
+      //       )
+      //     : null,
       body: _state == 1 ? _liveFeedBody() : Container(color: kPrimaryColor),
     );
   }

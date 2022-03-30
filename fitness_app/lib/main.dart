@@ -9,6 +9,7 @@ import 'package:fitness_app/screens/workout_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 // initialize variables
 List<Widget> listWidgets = [
@@ -51,48 +52,9 @@ class _MyAppState extends State<MyApp> {
     //Starting point of the app will be the WelcomeScreen. if user is logged in then the starting screen is MainMenuScreen().
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: Container(
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/images/background.png"),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Container(
-              child: listWidgets[pageIndex],
-            ),
-            bottomNavigationBar: ConvexAppBar(
-              backgroundColor: kPrimaryColor,
-              activeColor: kSecondaryColor,
-              items: [
-                TabItem(
-                  icon: Icon(
-                    FontAwesomeIcons.dumbbell,
-                    color: Colors.white,
-                  ),
-                ),
-                TabItem(
-                  icon: Icon(
-                    FontAwesomeIcons.home,
-                    color: Colors.white,
-                  ),
-                ),
-                TabItem(
-                  icon: Icon(
-                    FontAwesomeIcons.trophy,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-              initialActiveIndex: pageIndex,
-              onTap: (int i) {
-                setState(() {
-                  pageIndex = i;
-                });
-              },
-            ),
+        home: ShowCaseWidget(
+          builder: Builder(
+            builder: (context) => menuContent(),
           ),
         ),
         onGenerateRoute: (settings) {
@@ -114,5 +76,52 @@ class _MyAppState extends State<MyApp> {
             );
           }
         });
+  }
+
+  Widget menuContent() {
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage("assets/images/background.png"),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Container(
+          child: listWidgets[pageIndex],
+        ),
+        bottomNavigationBar: ConvexAppBar(
+          backgroundColor: kPrimaryColor.withOpacity(0.9),
+          activeColor: kSecondaryColor.withOpacity(0.9),
+          items: [
+            TabItem(
+              icon: Icon(
+                FontAwesomeIcons.dumbbell,
+                color: Colors.white,
+              ),
+            ),
+            TabItem(
+              icon: Icon(
+                FontAwesomeIcons.home,
+                color: Colors.white,
+              ),
+            ),
+            TabItem(
+              icon: Icon(
+                FontAwesomeIcons.trophy,
+                color: Colors.white,
+              ),
+            ),
+          ],
+          initialActiveIndex: pageIndex,
+          onTap: (int i) {
+            setState(() {
+              pageIndex = i;
+            });
+          },
+        ),
+      ),
+    );
   }
 }

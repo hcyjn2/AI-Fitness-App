@@ -40,8 +40,8 @@ class _WorkoutSessionState extends State<WorkoutSession> {
   bool isInit = true;
   List<WorkoutRecord> _workoutRecordList = [];
   List<BestRecord> _bestRecordList = [];
-  DateTime _currentDate = DateTime(DateTime.now().year, DateTime.now().month,
-      DateTime.now().day, DateTime.now().weekday);
+  DateTime _currentDate =
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
   // 0 = Loading, 1 = Workout Session, 2 = End of Workout
   int _state = 0;
@@ -63,7 +63,7 @@ class _WorkoutSessionState extends State<WorkoutSession> {
   }
 
   late Timer _timer;
-  int _countDownDuration = 3;
+  int _countDownDuration = 4;
   int _workoutDuration = 15;
 
   void startTimer() async {
@@ -138,24 +138,27 @@ class _WorkoutSessionState extends State<WorkoutSession> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Ready ?',
-              style: TextStyle(
-                fontFamily: 'nunito',
-                color: Colors.white,
-                fontSize: 55,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              _countDownDuration.toString(),
-              style: TextStyle(
-                fontFamily: 'nunito',
-                color: Colors.white,
-                fontSize: 80,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            _countDownDuration == 4
+                ? Text(
+                    'Ready ?',
+                    style: TextStyle(
+                      fontFamily: 'nunito',
+                      color: Colors.white,
+                      fontSize: 72,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  )
+                : Text(
+                    _countDownDuration == 0
+                        ? 'Go !'
+                        : _countDownDuration.toString(),
+                    style: TextStyle(
+                      fontFamily: 'nunito',
+                      color: Colors.white,
+                      fontSize: 105,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
           ],
         ),
       ),
@@ -178,12 +181,19 @@ class _WorkoutSessionState extends State<WorkoutSession> {
     await prefs.setInt('Last Workout Count', classRepetition);
     await prefs.setInt('Total Workout Done', totalWorkoutDone + 1);
 
-    counter++;
-    prefs.setString(
-        'Workout Record List', WorkoutRecord.encode(_workoutRecordList));
-    prefs.setString('Best Record List', BestRecord.encode(_bestRecordList));
+    _workoutRecordList.add(WorkoutRecord(
+        dateTime: _currentDate,
+        exerciseClass: resultClass.last,
+        exerciseRepetition: resultRep.last));
 
-    prefs.setInt('counter', counter);
+    await prefs.setString(
+        'Workout Record List', WorkoutRecord.encode(_workoutRecordList));
+    await prefs.setString(
+        'Best Record List', BestRecord.encode(_bestRecordList));
+
+    counter++;
+
+    await prefs.setInt('counter', counter);
   }
 
   Future _loadWorkoutRecordData() async {
@@ -221,11 +231,6 @@ class _WorkoutSessionState extends State<WorkoutSession> {
     String classRepetition = 'null';
 
     if (resultClass.isNotEmpty) {
-      _workoutRecordList.add(WorkoutRecord(
-          dateTime: _currentDate,
-          exerciseClass: resultClass.last,
-          exerciseRepetition: resultRep.last));
-
       updateBestRecord(resultClass.last, resultRep.last, _bestRecordList);
 
       await _saveWorkoutData(resultClass.last, resultRep.last);
@@ -302,6 +307,7 @@ class _WorkoutSessionState extends State<WorkoutSession> {
     startTimer();
 
     _bestRecordList = await _loadBestRecordData();
+
     _workoutRecordList = await _loadWorkoutRecordData();
   }
 
@@ -310,20 +316,22 @@ class _WorkoutSessionState extends State<WorkoutSession> {
     return Scaffold(
       floatingActionButton: _state == 1
           ? Padding(
-              padding: const EdgeInsets.only(top: 50),
+              padding: const EdgeInsets.only(top: 14.5),
               child: Container(
-                height: 80,
-                width: 80,
+                height: 98,
+                width: 98,
                 child: FittedBox(
                   child: FloatingActionButton(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(13.9))),
                     onPressed: () {},
-                    backgroundColor: kPrimaryColor,
+                    backgroundColor: Colors.black.withOpacity(0.7),
                     child: Text(
                       _workoutDuration.toString(),
                       style: TextStyle(
                           fontFamily: 'nunito',
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold),
+                          fontSize: 32,
+                          fontWeight: FontWeight.w900),
                     ),
                   ),
                 ),
@@ -344,7 +352,9 @@ class _WorkoutSessionState extends State<WorkoutSession> {
                     if (snapshot.connectionState == ConnectionState.done) {
                       return buildBody(_state);
                     } else {
-                      return Text('Loading...');
+                      return Container(
+                        color: kPrimaryColor,
+                      );
                     }
                   },
                 ),

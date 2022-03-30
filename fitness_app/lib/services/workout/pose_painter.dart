@@ -165,36 +165,37 @@ class PosePainter extends CustomPainter {
           PoseLandmarkType.rightHip, PoseLandmarkType.rightAnkle, rightPaint);
     });
 
+    String classificationResultText = 'Come on! You can do it !';
+
     if (resultClass.isNotEmpty) {
       String className = classIdentifierToClassName(resultClass.last);
       String classRepetition = resultRep.last.toString();
 
-      String classificationResultText =
-          className + ' : ' + classRepetition + ' reps.';
-
-      TextPainter classificationTextPaint = new TextPainter()
-        ..text = new TextSpan(
-          text: classificationResultText,
-          style: TextStyle(
-              fontFamily: 'nunito',
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              background: Paint()
-                ..strokeWidth = 50.0
-                ..color = kPrimaryColor
-                ..style = PaintingStyle.stroke
-                ..strokeJoin = StrokeJoin.round),
-        )
-        ..textDirection = TextDirection.ltr;
-
-      classificationTextPaint.layout();
-
-      final xCenter = (size.width - classificationTextPaint.width) / 2;
-      final yCenter = (size.height - classificationTextPaint.height) * 0.90;
-      final offset = Offset(xCenter, yCenter);
-      classificationTextPaint.paint(canvas, offset);
+      classificationResultText = className + '  :  ' + classRepetition;
     }
+
+    TextPainter classificationTextPaint = new TextPainter()
+      ..text = new TextSpan(
+        text: classificationResultText,
+        style: TextStyle(
+            fontFamily: 'nunito',
+            fontSize: 30,
+            fontWeight: FontWeight.w900,
+            color: Colors.white,
+            background: Paint()
+              ..strokeWidth = 50.0
+              ..color = Colors.black.withOpacity(0.7)
+              ..style = PaintingStyle.stroke
+              ..strokeJoin = StrokeJoin.round),
+      )
+      ..textDirection = TextDirection.ltr;
+
+    classificationTextPaint.layout();
+
+    final xCenter = (size.width - classificationTextPaint.width) / 2;
+    final yCenter = (size.height - classificationTextPaint.height) * 0.93;
+    final offset = Offset(xCenter, yCenter);
+    classificationTextPaint.paint(canvas, offset);
 
     // Classification Confidence
     // for (var pose in poses) {

@@ -1,6 +1,8 @@
 import 'package:fitness_app/widgets/custom_card.dart';
 import 'package:fitness_app/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:showcaseview/showcaseview.dart';
 
 import '../constants.dart';
 
@@ -11,201 +13,271 @@ class WorkoutMenu extends StatefulWidget {
 }
 
 class _WorkoutMenuState extends State<WorkoutMenu> {
+  final _key1 = GlobalKey();
+  var workoutMenuTutorial = true;
+  late Future future;
+
+  Future _workoutMenuTutorialOff() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('workoutMenuTutorial', workoutMenuTutorial);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    future = getFuture();
+  }
+
+  Future getFuture() async {
+    await _loadTutorial();
+  }
+
+  Future _loadTutorial() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    workoutMenuTutorial = await prefs.getBool('workoutMenuTutorial') ?? true;
+
+    if (workoutMenuTutorial) {
+      WidgetsBinding.instance!.addPostFrameCallback((_) => {
+            ShowCaseWidget.of(context)!.startShowCase(
+              [
+                _key1,
+              ],
+            ),
+            workoutMenuTutorial = false,
+            _workoutMenuTutorialOff()
+          });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.915,
-      width: MediaQuery.of(context).size.width * 0.995,
-      child: CustomCard(
-        boxShadow: BoxShadow(
-          color: kSecondaryColor.withOpacity(0.5),
-          spreadRadius: 5,
-          blurRadius: 7,
-          offset: Offset(0, 3), // changes position of shadow
-        ),
-        color: kSecondaryColor.withOpacity(0.39),
-        child: GridView.count(
-          primary: false,
-          padding: const EdgeInsets.all(20),
-          crossAxisSpacing: 20,
-          mainAxisSpacing: 20,
-          crossAxisCount: 2,
-          children: <Widget>[
-            CustomElevatedButton(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(5.2),
-                      child: Image(
-                        image: AssetImage('assets/images/pushUp.png'),
-                        height: 50,
-                      ),
-                    ),
-                    Text(
-                      'PUSH UP',
-                      style: TextStyle(
-                          fontFamily: 'nunito',
-                          fontSize: 21,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white),
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Image(
-                          image: AssetImage('assets/images/chest.png'),
-                          height: 40,
-                        ),
-                        SizedBox(
-                          width: 40,
-                        ),
-                        Image(
-                          image: AssetImage('assets/images/Resistance.png'),
-                          height: 32,
-                        ),
-                      ],
-                    ),
-                    Image(
-                      image: AssetImage('assets/images/easy.png'),
-                      height: 22,
-                    ),
-                  ],
+    return FutureBuilder(
+        future: future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.915,
+              width: MediaQuery.of(context).size.width * 0.995,
+              child: Showcase(
+                overlayPadding: EdgeInsets.fromLTRB(-10, -10, -10, -200),
+                key: _key1,
+                description:
+                    'You can select different exercises from this menu.',
+                shapeBorder: const RoundedRectangleBorder(),
+                contentPadding: EdgeInsets.all(20),
+                showcaseBackgroundColor: kPrimaryColor,
+                descTextStyle: TextStyle(
+                    fontFamily: 'nunito',
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w900),
+                child: CustomCard(
+                  boxShadow: BoxShadow(
+                    color: kAccentColor.withOpacity(0.3),
+                    spreadRadius: 10,
+                    blurRadius: 7,
+                    offset: Offset(0, 1), // changes position of shadow
+                  ),
+                  color: kSecondaryColor.withOpacity(0.39),
+                  child: GridView.count(
+                    primary: false,
+                    padding: const EdgeInsets.all(20),
+                    crossAxisSpacing: 20,
+                    mainAxisSpacing: 20,
+                    crossAxisCount: 2,
+                    children: <Widget>[
+                      CustomElevatedButton(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(5.2),
+                                child: Image(
+                                  image: AssetImage('assets/images/pushUp.png'),
+                                  height: 50,
+                                ),
+                              ),
+                              Text(
+                                'PUSH UP',
+                                style: TextStyle(
+                                    fontFamily: 'Insanibu',
+                                    fontSize: 21,
+                                    color: Colors.white),
+                              ),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Image(
+                                    image:
+                                        AssetImage('assets/images/chest.png'),
+                                    height: 40,
+                                  ),
+                                  SizedBox(
+                                    width: 40,
+                                  ),
+                                  Image(
+                                    image: AssetImage(
+                                        'assets/images/Resistance.png'),
+                                    height: 32,
+                                  ),
+                                ],
+                              ),
+                              Image(
+                                image: AssetImage('assets/images/easy.png'),
+                                height: 22,
+                              ),
+                            ],
+                          ),
+                          gradient: LinearGradient(
+                              colors: [kPrimaryColor, kAccentColor],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight),
+                          borderRadius: BorderRadius.circular(14.0),
+                          boxShadow: BoxShadow(
+                            color: Colors.black26,
+                            spreadRadius: 2.5,
+                            blurRadius: 7,
+                            offset: Offset(0, 5), // changes position of shadow
+                          ),
+                          onPressed: () {
+                            buildPushUpDemo();
+                          }),
+                      CustomElevatedButton(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(3.0),
+                                child: Image(
+                                  image: AssetImage('assets/images/squat.png'),
+                                  height: 55,
+                                ),
+                              ),
+                              Text(
+                                'SQUAT',
+                                style: TextStyle(
+                                    fontFamily: 'Insanibu',
+                                    fontSize: 21,
+                                    color: Colors.white),
+                              ),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Image(
+                                    image: AssetImage('assets/images/quad.png'),
+                                    height: 40,
+                                  ),
+                                  SizedBox(
+                                    width: 40,
+                                  ),
+                                  Image(
+                                    image: AssetImage(
+                                        'assets/images/Resistance.png'),
+                                    height: 32,
+                                  ),
+                                ],
+                              ),
+                              Image(
+                                image: AssetImage('assets/images/easy.png'),
+                                height: 22,
+                              ),
+                            ],
+                          ),
+                          gradient: LinearGradient(
+                              colors: [kPrimaryColor, kAccentColor],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomCenter),
+                          borderRadius: BorderRadius.circular(14.0),
+                          boxShadow: BoxShadow(
+                            color: Colors.black26,
+                            spreadRadius: 2.5,
+                            blurRadius: 7,
+                            offset: Offset(0, 5), // changes position of shadow
+                          ),
+                          onPressed: () {
+                            buildSquatDemo();
+                          }),
+                      CustomElevatedButton(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Image(
+                                  image: AssetImage(
+                                      'assets/images/jumpingJack.png'),
+                                  height: 55,
+                                ),
+                              ),
+                              Text(
+                                'JUMPING JACK',
+                                style: TextStyle(
+                                    fontFamily: 'Insanibu',
+                                    fontSize: 18,
+                                    color: Colors.white),
+                              ),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 5,
+                                  ),
+                                  Image(
+                                    image: AssetImage('assets/images/calf.png'),
+                                    height: 40,
+                                  ),
+                                  SizedBox(
+                                    width: 40,
+                                  ),
+                                  Image(
+                                    image:
+                                        AssetImage('assets/images/Cardio.png'),
+                                    height: 32,
+                                  ),
+                                ],
+                              ),
+                              Image(
+                                image: AssetImage('assets/images/easy.png'),
+                                height: 22,
+                              ),
+                            ],
+                          ),
+                          gradient: LinearGradient(
+                              colors: [kPrimaryColor, kAccentColor],
+                              begin: Alignment.bottomRight,
+                              end: Alignment.topLeft),
+                          borderRadius: BorderRadius.circular(14.0),
+                          boxShadow: BoxShadow(
+                            color: Colors.black26,
+                            spreadRadius: 2.5,
+                            blurRadius: 7,
+                            offset: Offset(0, 5), // changes position of shadow
+                          ),
+                          onPressed: () {
+                            buildJumpingJackDemo();
+                          })
+                    ],
+                  ),
                 ),
-                gradient: LinearGradient(
-                    colors: [kPrimaryColor, kAccentColor],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight),
-                borderRadius: BorderRadius.circular(14.0),
-                boxShadow: BoxShadow(
-                  color: Colors.black26,
-                  spreadRadius: 2.5,
-                  blurRadius: 7,
-                  offset: Offset(0, 5), // changes position of shadow
-                ),
-                onPressed: () {
-                  buildPushUpDemo();
-                }),
-            CustomElevatedButton(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(3.0),
-                      child: Image(
-                        image: AssetImage('assets/images/squat.png'),
-                        height: 55,
-                      ),
-                    ),
-                    Text(
-                      'SQUAT',
-                      style: TextStyle(
-                          fontFamily: 'nunito',
-                          fontSize: 21,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white),
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Image(
-                          image: AssetImage('assets/images/quad.png'),
-                          height: 40,
-                        ),
-                        SizedBox(
-                          width: 40,
-                        ),
-                        Image(
-                          image: AssetImage('assets/images/Resistance.png'),
-                          height: 32,
-                        ),
-                      ],
-                    ),
-                    Image(
-                      image: AssetImage('assets/images/easy.png'),
-                      height: 22,
-                    ),
-                  ],
-                ),
-                gradient: LinearGradient(
-                    colors: [kPrimaryColor, kAccentColor],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight),
-                borderRadius: BorderRadius.circular(14.0),
-                boxShadow: BoxShadow(
-                  color: Colors.black26,
-                  spreadRadius: 2.5,
-                  blurRadius: 7,
-                  offset: Offset(0, 5), // changes position of shadow
-                ),
-                onPressed: () {
-                  buildSquatDemo();
-                }),
-            CustomElevatedButton(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Image(
-                        image: AssetImage('assets/images/jumpingJack.png'),
-                        height: 55,
-                      ),
-                    ),
-                    Text(
-                      'JUMPING JACK',
-                      style: TextStyle(
-                          fontFamily: 'nunito',
-                          fontSize: 15.9,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white),
-                    ),
-                    Row(
-                      children: [
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Image(
-                          image: AssetImage('assets/images/calf.png'),
-                          height: 40,
-                        ),
-                        SizedBox(
-                          width: 40,
-                        ),
-                        Image(
-                          image: AssetImage('assets/images/Cardio.png'),
-                          height: 32,
-                        ),
-                      ],
-                    ),
-                    Image(
-                      image: AssetImage('assets/images/easy.png'),
-                      height: 22,
-                    ),
-                  ],
-                ),
-                gradient: LinearGradient(
-                    colors: [kPrimaryColor, kAccentColor],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight),
-                borderRadius: BorderRadius.circular(14.0),
-                boxShadow: BoxShadow(
-                  color: Colors.black26,
-                  spreadRadius: 2.5,
-                  blurRadius: 7,
-                  offset: Offset(0, 5), // changes position of shadow
-                ),
-                onPressed: () {
-                  buildSquatDemo();
-                })
-          ],
-        ),
-      ),
-    );
+              ),
+            );
+          } else {
+            return Container(
+                child: Center(
+                    child: Text(
+              'Loading...',
+              style: TextStyle(
+                  fontFamily: 'nunito',
+                  fontSize: 20,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold),
+            )));
+          }
+        });
   }
 
   RichText workoutStartMessage = new RichText(
@@ -219,20 +291,20 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
       ),
       children: <TextSpan>[
         new TextSpan(
-            text: 'Please make sure your surrounding is ',
-            style:
-                workoutStartMessageStyle.copyWith(fontWeight: FontWeight.bold)),
-        new TextSpan(text: 'Well-Lit', style: workoutStartMessageStyle),
-        new TextSpan(
-            text: ' & have ',
+            text:
+                'Please ensure a few things before you proceed with this feature: \n\n',
             style:
                 workoutStartMessageStyle.copyWith(fontWeight: FontWeight.bold)),
         new TextSpan(
-            text: 'Ample Physical Space', style: workoutStartMessageStyle),
+            text: '1. Well-Lit Surroundings\n',
+            style: workoutStartMessageStyle),
         new TextSpan(
-            text: ' for this feature.\n\nDo you wish to start now?',
-            style:
-                workoutStartMessageStyle.copyWith(fontWeight: FontWeight.bold)),
+            text: '2. Ample of Physical Space\n',
+            style: workoutStartMessageStyle),
+        new TextSpan(
+            text:
+                '3. Device is around Waist Height & Able to Capture Full Body\n',
+            style: workoutStartMessageStyle),
       ],
     ),
   );
@@ -411,52 +483,159 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
         });
   }
 
+  Future buildJumpingJackDemo() {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            contentPadding: EdgeInsets.fromLTRB(24, 10, 24, 0),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            title: Text(
+              'Jumping Jack Demonstration',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontFamily: 'nunito',
+                  fontSize: 23,
+                  fontWeight: FontWeight.w900,
+                  color: kPrimaryColor),
+            ),
+            content: Container(
+              height: 600,
+              width: 320,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Container(
+                    child: Column(children: [
+                      Image(
+                        image: AssetImage('assets/images/jumpingJack.gif'),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Text(
+                        'Tips',
+                        style: TextStyle(
+                            fontFamily: 'nunito',
+                            decoration: TextDecoration.underline,
+                            decorationThickness: 3,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w900,
+                            color: kPrimaryColor),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                          '\u00b7 Raise your arms above your head, keeping elbows straight. \n \u00b7 Feet wider than your shoulders.',
+                          style: TextStyle(
+                              fontFamily: 'nunito',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w900,
+                              color: kPrimaryColor))
+                    ]),
+                  ),
+                  Container(
+                      child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 50, 20, 0),
+                    child: MaterialButton(
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      elevation: 5,
+                      color: kPrimaryColor,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 8),
+                        child: Text('Next',
+                            style: TextStyle(
+                                fontFamily: 'nunito',
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white)),
+                      ),
+                      onPressed: () async {
+                        setState(() {
+                          //NO Action
+                          Navigator.pop(context);
+                          buildConfirmationAlert(PoseClass.classSquat);
+                        });
+                      },
+                    ),
+                  ))
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   Future buildConfirmationAlert(PoseClass poseClass) {
     return showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
             title: workoutStartMessage,
-            content: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                MaterialButton(
-                  elevation: 5.0,
-                  color: Colors.grey,
-                  child: Text('NO',
-                      style: TextStyle(
-                          fontFamily: 'nunito',
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold)),
-                  onPressed: () async {
-                    setState(() {
-                      //NO Action
-                      Navigator.pop(context);
-                    });
-                  },
-                ),
-                SizedBox(width: 30),
-                MaterialButton(
-                  elevation: 5.0,
-                  color: kPrimaryColor,
-                  child: Text('YES',
-                      style: TextStyle(
-                          fontFamily: 'nunito',
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold)),
-                  onPressed: () async {
-                    setState(() {
-                      //NO Action
-                      Navigator.pop(context);
-                      Navigator.pushNamed(
-                        context,
-                        '/workoutcalibration',
-                        arguments: poseClass,
-                      );
-                    });
-                  },
-                ),
-              ],
+            content: Container(
+              height: 360,
+              child: Column(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: Opacity(
+                      opacity: 0.9,
+                      child: Image(
+                        height: 220,
+                        image: AssetImage('assets/images/cameraAngle.png'),
+                      ),
+                    ),
+                  ),
+                  Text('\nDo you wish to start now?\n',
+                      style: workoutStartMessageStyle.copyWith(
+                          fontSize: 20, fontWeight: FontWeight.bold)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      MaterialButton(
+                        elevation: 5.0,
+                        color: Colors.grey,
+                        child: Text('NO',
+                            style: TextStyle(
+                                fontFamily: 'nunito',
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold)),
+                        onPressed: () async {
+                          setState(() {
+                            //NO Action
+                            Navigator.pop(context);
+                          });
+                        },
+                      ),
+                      SizedBox(width: 30),
+                      MaterialButton(
+                        elevation: 5.0,
+                        color: kPrimaryColor,
+                        child: Text('YES',
+                            style: TextStyle(
+                                fontFamily: 'nunito',
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold)),
+                        onPressed: () async {
+                          setState(() {
+                            //NO Action
+                            Navigator.pop(context);
+                            Navigator.pushNamed(
+                              context,
+                              '/workoutcalibration',
+                              arguments: poseClass,
+                            );
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           );
         });

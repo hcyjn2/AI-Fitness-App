@@ -12,7 +12,7 @@ class WorkoutRecord {
 
   factory WorkoutRecord.fromJson(Map<String, dynamic> jsonData) {
     return WorkoutRecord(
-        dateTime: jsonData['dateTime'],
+        dateTime: DateTime.parse(jsonData['dateTime']),
         exerciseClass: jsonData['exerciseClass'],
         exerciseRepetition: jsonData['exerciseRepetition']);
   }
