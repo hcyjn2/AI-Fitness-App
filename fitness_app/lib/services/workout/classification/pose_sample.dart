@@ -23,7 +23,8 @@ class PoseSample {
   final PoseClass __poseClass;
   List<PoseLandmark> __embedding = [];
 
-  PoseSample(this.__name, this.__className, this.__landmarks, this.__poseClass) {
+  PoseSample(
+      this.__name, this.__className, this.__landmarks, this.__poseClass) {
     __embedding = PoseEmbedding.getPoseEmbedding(__landmarks, this.__poseClass);
   }
 
@@ -37,10 +38,12 @@ class PoseSample {
     String dataDirectory = '';
     // String dataDirectory = 'assets/data/fitness_pose_samples.csv';
 
-    if(poseClass == PoseClass.classPushUp){
+    if (poseClass == PoseClass.classPushUp) {
       dataDirectory = 'assets/data/pushup_samples.csv';
-    }else if(poseClass == PoseClass.classJumpSquat || poseClass == PoseClass.classSquat){
+    } else if (poseClass == PoseClass.classSquat) {
       dataDirectory = 'assets/data/squat_samples.csv';
+    } else if (poseClass == PoseClass.classJumpingJack) {
+      dataDirectory = 'assets/data/jumpingjack_samples.csv';
     }
 
     var csv = await rootBundle
