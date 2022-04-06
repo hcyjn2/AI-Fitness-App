@@ -166,28 +166,59 @@ class PosePainter extends CustomPainter {
     });
 
     String classificationResultText = 'Come on! You can do it !';
+    String adviceText = '';
+    bool properForm = true;
 
     if (resultClass.isNotEmpty) {
       String className = classIdentifierToClassName(resultClass.last);
       String classRepetition = resultRep.last.toString();
 
-      classificationResultText = className + '  :  ' + classRepetition;
+      if (isValidClass(resultClass.last)) {
+        properForm = true;
+        classificationResultText = className + '  :  ' + classRepetition;
+      } else if (classIdentifierToPoseClass(resultClass.last) ==
+          PoseClass.classSquatBackSlouching) {
+        properForm = false;
+        adviceText = 'Try to Straighten your Back!';
+      } else if (classIdentifierToPoseClass(resultClass.last) ==
+          PoseClass.classSquatHalfRep) {
+        properForm = false;
+        adviceText = 'Go even Lower than that!';
+      } else if (classIdentifierToPoseClass(resultClass.last) ==
+          PoseClass.classJumpingJackBentArm) {
+        properForm = false;
+        adviceText = 'Keep your Elbows Straight!';
+      }
     }
 
     TextPainter classificationTextPaint = new TextPainter()
-      ..text = new TextSpan(
-        text: classificationResultText,
-        style: TextStyle(
-            fontFamily: 'nunito',
-            fontSize: 30,
-            fontWeight: FontWeight.w900,
-            color: Colors.white,
-            background: Paint()
-              ..strokeWidth = 50.0
-              ..color = Colors.black.withOpacity(0.7)
-              ..style = PaintingStyle.stroke
-              ..strokeJoin = StrokeJoin.round),
-      )
+      ..text = (properForm == true)
+          ? new TextSpan(
+              text: classificationResultText,
+              style: TextStyle(
+                  fontFamily: 'nunito',
+                  fontSize: 30,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  background: Paint()
+                    ..strokeWidth = 50.0
+                    ..color = Colors.black.withOpacity(0.7)
+                    ..style = PaintingStyle.stroke
+                    ..strokeJoin = StrokeJoin.round),
+            )
+          : new TextSpan(
+              text: adviceText,
+              style: TextStyle(
+                  fontFamily: 'nunito',
+                  fontSize: 23,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  background: Paint()
+                    ..strokeWidth = 50.0
+                    ..color = Colors.deepOrangeAccent.withOpacity(0.7)
+                    ..style = PaintingStyle.stroke
+                    ..strokeJoin = StrokeJoin.round),
+            )
       ..textDirection = TextDirection.ltr;
 
     classificationTextPaint.layout();

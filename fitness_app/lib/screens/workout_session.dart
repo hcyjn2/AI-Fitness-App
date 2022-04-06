@@ -10,6 +10,7 @@ import 'package:fitness_app/services/workout/classification/pose_sample.dart';
 import 'package:fitness_app/services/workout/pose_painter.dart';
 import 'package:flutter/material.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:tuple/tuple.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -38,10 +39,12 @@ class _WorkoutSessionState extends State<WorkoutSession> {
   late PoseClassifierProcessor poseClassifierProcessor;
   List<PoseSample> _poseSamples = [];
   bool isInit = true;
+  bool narration = true;
   List<WorkoutRecord> _workoutRecordList = [];
   List<BestRecord> _bestRecordList = [];
   DateTime _currentDate =
       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  final _player = AudioPlayer();
 
   // 0 = Loading, 1 = Workout Session, 2 = End of Workout
   int _state = 0;
@@ -166,7 +169,7 @@ class _WorkoutSessionState extends State<WorkoutSession> {
   }
 
   Future _initSaveData() async {
-    for (var classIdentifier in poseClasses)
+    for (var classIdentifier in poseClassesWithoutVariation)
       _bestRecordList.add(
           BestRecord(exerciseClass: classIdentifier, exerciseRepetition: 0));
   }
@@ -194,6 +197,7 @@ class _WorkoutSessionState extends State<WorkoutSession> {
     counter++;
 
     await prefs.setInt('counter', counter);
+    await prefs.setBool('narration', narration);
   }
 
   Future _loadWorkoutRecordData() async {
@@ -208,6 +212,7 @@ class _WorkoutSessionState extends State<WorkoutSession> {
   Future _loadBestRecordData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var counter = await prefs.getInt('counter') ?? 0;
+    narration = await prefs.getBool('narration') ?? true;
 
     if (counter < 1) _initSaveData();
 
@@ -231,12 +236,36 @@ class _WorkoutSessionState extends State<WorkoutSession> {
     String classRepetition = 'null';
 
     if (resultClass.isNotEmpty) {
-      updateBestRecord(resultClass.last, resultRep.last, _bestRecordList);
+      if (isValidClass(resultClass.last)) {
+        updateBestRecord(resultClass.last, resultRep.last, _bestRecordList);
+        await _saveWorkoutData(resultClass.last, resultRep.last);
 
-      await _saveWorkoutData(resultClass.last, resultRep.last);
+        className = classIdentifierToClassName(resultClass.last);
+        classRepetition = resultRep.last.toString();
+      } else {
+        for (int i = 2; i < resultClass.length; i++) {
+          if (isValidClass(resultClass.elementAt(resultClass.length - i))) {
+            var validClass = resultClass.elementAt(resultClass.length - i);
+            var validRep = resultRep.elementAt(resultClass.length - i);
 
-      className = classIdentifierToClassName(resultClass.last);
-      classRepetition = resultRep.last.toString();
+            updateBestRecord(validClass, validRep, _bestRecordList);
+            await _saveWorkoutData(validClass, validRep);
+
+            className = classIdentifierToClassName(validClass);
+            classRepetition = validRep.toString();
+            break;
+          }
+        }
+      }
+    }
+
+    if (narration) {
+      if (resultClass.isNotEmpty) {
+        await _player.setAsset('assets/audios/completed_female.mp3');
+      } else if (resultClass.isEmpty) {
+        await _player.setAsset('assets/audios/failed_female.mp3');
+      }
+      _player.play();
     }
 
     return showDialog(
@@ -245,14 +274,14 @@ class _WorkoutSessionState extends State<WorkoutSession> {
         builder: (context) {
           return AlertDialog(
             title: resultClass.isEmpty
-                ? Text('No Worry, You can do better next time!',
+                ? Text('No Worries, You can do better next time!',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                         fontFamily: 'nunito',
                         fontSize: 18,
                         fontWeight: FontWeight.bold))
                 : Text(
-                    'Great Work! \n\n You have just finished the workout. \n' +
+                    'Great Job! \n\n You have just completed a workout. \n' +
                         className +
                         ' : ' +
                         classRepetition +
@@ -376,7 +405,7 @@ class _WorkoutSessionState extends State<WorkoutSession> {
     // -----------------------Classification--------------------------------
     if (isInit) {
       poseClassifierProcessor = await new PoseClassifierProcessor(
-          isStreamMode, _poseSamples, widget.poseClass);
+          isStreamMode, _poseSamples, widget.poseClass, narration);
 
       isInit = false;
     }

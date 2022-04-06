@@ -103,7 +103,7 @@ class _MyAppState extends State<MyApp> {
             ),
             TabItem(
               icon: Icon(
-                FontAwesomeIcons.home,
+                FontAwesomeIcons.dashboard,
                 color: Colors.white,
               ),
             ),

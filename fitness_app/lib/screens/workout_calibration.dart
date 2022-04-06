@@ -28,47 +28,48 @@ class _WorkoutCalibrationState extends State<WorkoutCalibration> {
     future = _getFuture();
 
     accelerometerEvents.listen((AccelerometerEvent event) {
-      if(mounted){
+      if (mounted) {
         setState(() {
-        double x = event.x, y = event.y, z = event.z;
-        double norm_Of_g = math
-            .sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
-        x = event.x / norm_Of_g;
-        y = event.y / norm_Of_g;
-        z = event.z / norm_Of_g;
+          double x = event.x, y = event.y, z = event.z;
+          double norm_Of_g = math
+              .sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
+          x = event.x / norm_Of_g;
+          y = event.y / norm_Of_g;
+          z = event.z / norm_Of_g;
 
-        double xInclination = -(math.asin(x) * (180 / math.pi));
-        double yInclination = (math.acos(y) * (180 / math.pi));
-        double zInclination = (math.atan(z) * (180 / math.pi));
+          double xInclination = -(math.asin(x) * (180 / math.pi));
+          double yInclination = (math.acos(y) * (180 / math.pi));
+          double zInclination = (math.atan(z) * (180 / math.pi));
 
-        _resetCalibration() {
-          calibrationCounter = 0;
-          angleCalibrated = false;
-        }
-
-        if (xInclination.round() < -5) {
-          instructionText = 'Rotate right';
-          _resetCalibration();
-        } else if (xInclination.round() > 5) {
-          instructionText = 'Rotate left';
-          _resetCalibration();
-        } else if (zInclination.round() < -3) {
-          instructionText = 'Tilt Up';
-          _resetCalibration();
-        } else if (zInclination.round() > 10) {
-          instructionText = 'Tilt Down';
-          _resetCalibration();
-        } else {
-          instructionText = 'Hold...';
-          calibrationCounter++;
-          if (calibrationCounter >= 18) {
-            instructionText = 'Ready to Proceed!';
-            angleCalibrated = true;
+          _resetCalibration() {
+            calibrationCounter = 0;
+            angleCalibrated = false;
           }
-          ;
-        }
-      });
-    }});
+
+          if (xInclination.round() < -5) {
+            instructionText = 'Rotate right';
+            _resetCalibration();
+          } else if (xInclination.round() > 5) {
+            instructionText = 'Rotate left';
+            _resetCalibration();
+          } else if (zInclination.round() < -3) {
+            instructionText = 'Tilt Up';
+            _resetCalibration();
+          } else if (zInclination.round() > 10) {
+            instructionText = 'Tilt Down';
+            _resetCalibration();
+          } else {
+            instructionText = 'Hold...';
+            calibrationCounter++;
+            if (calibrationCounter >= 18) {
+              instructionText = 'Ready to Proceed!';
+              angleCalibrated = true;
+            }
+            ;
+          }
+        });
+      }
+    });
   }
 
   _getFuture() async {
@@ -102,9 +103,9 @@ class _WorkoutCalibrationState extends State<WorkoutCalibration> {
                             instructionText,
                             style: TextStyle(
                                 fontFamily: 'nunito',
-                                    fontSize: 30,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w900),
+                                fontSize: 30,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -142,19 +143,16 @@ class _WorkoutCalibrationState extends State<WorkoutCalibration> {
                             '   Next   ',
                             style: TextStyle(
                                 fontFamily: 'nunito',
-                                    fontSize: 30,
-                                    color: angleCalibrated
-                                        ? Colors.white
-                                        : Colors.white30,
-                                    fontWeight: FontWeight.bold),
+                                fontSize: 30,
+                                color: angleCalibrated
+                                    ? Colors.white
+                                    : Colors.white30,
+                                fontWeight: FontWeight.w900),
                           ),
                           onPressed: () async {
                             if (angleCalibrated) {
-                              Navigator.pushNamed(
-                                context,
-                                '/workoutsession',
-                                arguments: widget.poseClass
-                              );
+                              Navigator.pushNamed(context, '/workoutsession',
+                                  arguments: widget.poseClass);
                             }
                           })
                     ],

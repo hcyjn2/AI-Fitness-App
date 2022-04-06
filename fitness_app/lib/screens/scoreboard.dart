@@ -1,5 +1,4 @@
 import 'package:fitness_app/services/workout/classification/best_record.dart';
-import 'package:fitness_app/services/workout/classification/workout_record.dart';
 import 'package:fitness_app/widgets/custom_card.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,7 +31,7 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
   }
 
   Future _initSaveData() async {
-    for (var classIdentifier in poseClasses)
+    for (var classIdentifier in poseClassesWithoutVariation)
       _bestRecordList.add(
           BestRecord(exerciseClass: classIdentifier, exerciseRepetition: 0));
   }

@@ -824,13 +824,11 @@
 // }
 
 import 'package:charts_painter/chart.dart';
-import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:fitness_app/constants.dart';
 import 'package:fitness_app/screens/workout_menu.dart';
 import 'package:fitness_app/services/workout/classification/workout_record.dart';
 import 'package:fitness_app/widgets/custom_card.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:showcaseview/showcaseview.dart';
 
@@ -1208,7 +1206,7 @@ class _MainMenuState extends State<MainMenu> {
                                             .map((e) =>
                                                 BarValue<void>(e.toDouble()))
                                             .toList(),
-                                        axisMax: 8.0,
+                                        axisMax: 12.0,
                                       ),
                                       behaviour: ChartBehaviour(
                                           onItemClicked: (value) {}),

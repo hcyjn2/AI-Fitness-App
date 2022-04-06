@@ -1,4 +1,3 @@
-import 'dart:collection';
 import 'dart:core';
 
 import 'package:fitness_app/services/workout/classification/classification_result.dart';
@@ -6,16 +5,16 @@ import 'package:fitness_app/services/workout/classification/ema_smoothing.dart';
 import 'package:fitness_app/services/workout/classification/pose_classifier.dart';
 import 'package:fitness_app/services/workout/classification/pose_sample.dart';
 import 'package:fitness_app/services/workout/classification/repetition_counter.dart';
-import 'package:flutter/services.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:tuple/tuple.dart';
 import 'package:fitness_app/constants.dart';
-import 'package:soundpool/soundpool.dart';
+import 'package:just_audio/just_audio.dart';
 
 const tag = "PoseClassifierProcessor";
 
 class PoseClassifierProcessor {
   bool __isStreamMode;
+  bool __narration;
   late EMASmoothing __emaSmoothing;
   late List<RepetitionCounter> __repCounters;
   late PoseClassifier __poseClassifier;
@@ -24,8 +23,10 @@ class PoseClassifierProcessor {
   late List<String> resultClass;
   late List<int> resultRep;
   final PoseClass __poseClass;
+  final _player = AudioPlayer();
 
-  PoseClassifierProcessor(this.__isStreamMode, this.__poseSamples, this.__poseClass) {
+  PoseClassifierProcessor(this.__isStreamMode, this.__poseSamples,
+      this.__poseClass, this.__narration) {
     if (__isStreamMode) {
       __emaSmoothing = new EMASmoothing();
       __repCounters = [];
@@ -69,8 +70,6 @@ class PoseClassifierProcessor {
 
   Future<Tuple3<List<String>, List<String>, List<int>>> getPoseResult(
       Pose pose) async {
-    Soundpool pool = Soundpool.fromOptions(options: SoundpoolOptions.kDefault);
-
     List<String> classificationResult = [];
 
     Tuple3<List<String>, List<String>, List<int>> resultTuple =
@@ -96,17 +95,52 @@ class PoseClassifierProcessor {
         int repsBefore = repCounter.numRepeats;
         int repsAfter = repCounter.addClassificationResult(classification);
         if (repsAfter > repsBefore) {
-          // Play a Ding sound when rep counter updates.
-          int soundId = await rootBundle
-              .load("assets/audios/ding.mp3")
-              .then((ByteData soundData) {
-            return pool.load(soundData);
-          });
-
-          await pool.play(soundId);
-
           resultClass.add(repCounter.className);
           resultRep.add(repsAfter);
+
+          if (__narration) {
+            if (classIdentifierToPoseClass(repCounter.className) ==
+                PoseClass.classJumpingJackBentArm) {
+              await _player.setAsset('assets/audios/bentarm_female.mp3');
+            } else if (classIdentifierToPoseClass(repCounter.className) ==
+                PoseClass.classSquatHalfRep) {
+              await _player.setAsset('assets/audios/halfrep_female.mp3');
+            } else if (classIdentifierToPoseClass(repCounter.className) ==
+                PoseClass.classSquatBackSlouching) {
+              await _player.setAsset('assets/audios/backslouch_female.mp3');
+            }
+
+            if (isValidClass(repCounter.className)) {
+              if (repsAfter == 1) {
+                await _player.setAsset('assets/audios/one_female.mp3');
+              } else if (repsAfter == 2) {
+                await _player.setAsset('assets/audios/two_female.mp3');
+              } else if (repsAfter == 3) {
+                await _player.setAsset('assets/audios/three_female.mp3');
+              } else if (repsAfter == 4) {
+                await _player.setAsset('assets/audios/four_female.mp3');
+              } else if (repsAfter == 5) {
+                await _player.setAsset('assets/audios/five_female.mp3');
+              } else if (repsAfter == 6) {
+                await _player.setAsset('assets/audios/six_female.mp3');
+              } else if (repsAfter == 7) {
+                await _player.setAsset('assets/audios/seven_female.mp3');
+              } else if (repsAfter == 8) {
+                await _player.setAsset('assets/audios/eight_female.mp3');
+              } else if (repsAfter == 9) {
+                await _player.setAsset('assets/audios/nine_female.mp3');
+              } else if (repsAfter == 10) {
+                await _player.setAsset('assets/audios/ten_female.mp3');
+              } else if (repsAfter == 11) {
+                await _player.setAsset('assets/audios/eleven_female.mp3');
+              } else if (repsAfter == 12) {
+                await _player.setAsset('assets/audios/twelve_female.mp3');
+              } else {
+                await _player.setAsset('assets/audios/ding.mp3');
+              }
+            }
+            _player.play();
+          }
 
           __lastRepResult =
               (repCounter.className + ' : ' + repsAfter.toString() + ' reps');
@@ -122,7 +156,7 @@ class PoseClassifierProcessor {
         String maxConfidenceClassResult = (maxConfidenceClass +
             ' : ' +
             (classification.getClassConfidence(maxConfidenceClass)! /
-                __poseClassifier.confidenceRange())
+                    __poseClassifier.confidenceRange())
                 .toString() +
             ' confidence');
         classificationResult.add(maxConfidenceClassResult);
@@ -136,7 +170,7 @@ class PoseClassifierProcessor {
     return resultTuple;
   }
 
-  void stop(){
+  void stop() {
     __isStreamMode = false;
   }
 }

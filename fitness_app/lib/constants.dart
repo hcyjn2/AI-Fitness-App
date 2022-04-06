@@ -22,6 +22,12 @@ const poseClasses = {
   classJumpingJackBentArm,
 };
 
+const poseClassesWithoutVariation = {
+  classPushUp,
+  classSquat,
+  classJumpingJack,
+};
+
 enum PoseClass {
   classPushUp,
   classSquat,
@@ -29,6 +35,12 @@ enum PoseClass {
   classSquatBackSlouching,
   classJumpingJack,
   classJumpingJackBentArm,
+}
+
+enum poseClassWithoutVariation {
+  classPushUp,
+  classSquat,
+  classJumpingJack,
 }
 
 String poseClassToString(PoseClass poseClass) {
@@ -82,4 +94,19 @@ PoseClass classIdentifierToPoseClass(String classText) {
   else
     print('Error: No such Class.');
   return PoseClass.classPushUp;
+}
+
+bool isValidClass(var input) {
+  PoseClass poseClass;
+
+  if (input is String)
+    poseClass = classIdentifierToPoseClass(input);
+  else
+    poseClass = input;
+
+  bool out = (poseClass == PoseClass.classSquat ||
+      poseClass == PoseClass.classJumpingJack ||
+      poseClass == PoseClass.classPushUp);
+
+  return out;
 }

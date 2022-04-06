@@ -1,6 +1,8 @@
+import 'package:fitness_app/screens/settings.dart';
 import 'package:fitness_app/widgets/custom_card.dart';
 import 'package:fitness_app/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:showcaseview/showcaseview.dart';
 
@@ -17,6 +19,7 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
   final _key2 = GlobalKey();
   final _key3 = GlobalKey();
   final _key4 = GlobalKey();
+  final _key5 = GlobalKey();
 
   var workoutMenuTutorial = true;
   late Future future;
@@ -44,7 +47,7 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
     if (workoutMenuTutorial) {
       WidgetsBinding.instance!.addPostFrameCallback((_) => {
             ShowCaseWidget.of(context)!.startShowCase(
-              [_key1, _key2, _key3, _key4],
+              [_key1, _key2, _key3, _key4, _key5],
             ),
             workoutMenuTutorial = false,
             _workoutMenuTutorialOff()
@@ -82,16 +85,99 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
                     offset: Offset(0, 1), // changes position of shadow
                   ),
                   color: kSecondaryColor.withOpacity(0.39),
-                  child: GridView.count(
-                    primary: false,
-                    padding: const EdgeInsets.all(20),
-                    crossAxisSpacing: 20,
-                    mainAxisSpacing: 20,
-                    crossAxisCount: 2,
-                    children: <Widget>[
-                      pushUpButton(),
-                      squatButton(),
-                      jumpingJackButton()
+                  child: Stack(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(25, 10, 0, 10),
+                        child: Row(
+                          children: [
+                            Container(
+                              child: Text(
+                                '\u00b7 Workout',
+                                style: TextStyle(
+                                  shadows: <Shadow>[
+                                    Shadow(
+                                      offset: Offset(2, 1),
+                                      blurRadius: 8,
+                                      color: Color.fromARGB(125, 106, 106, 106),
+                                    ),
+                                  ],
+                                  fontFamily: 'Insanibu',
+                                  fontSize: 41,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 51,
+                            ),
+                            Container(
+                              height: 33.9,
+                              width: 50,
+                              child: Showcase(
+                                key: _key5,
+                                description:
+                                    'This navigates you to the Setting page, where you can turn off/on Narration during Workout.',
+                                shapeBorder: const RoundedRectangleBorder(),
+                                overlayPadding: EdgeInsets.all(8),
+                                contentPadding: EdgeInsets.all(20),
+                                showcaseBackgroundColor: kPrimaryColor,
+                                descTextStyle: TextStyle(
+                                    fontFamily: 'nunito',
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900),
+                                child: ElevatedButton(
+                                  style: ButtonStyle(
+                                    enableFeedback: true,
+                                    elevation:
+                                        MaterialStateProperty.resolveWith(
+                                            (states) => 3.0),
+                                    backgroundColor:
+                                        MaterialStateColor.resolveWith(
+                                            (states) => Colors.grey),
+                                    shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20.0),
+                                      ),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Settings()));
+                                  },
+                                  child: Icon(
+                                    FontAwesomeIcons.gear,
+                                    size: 20,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                      Container(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 55),
+                          child: GridView.count(
+                            primary: false,
+                            padding: const EdgeInsets.all(20),
+                            crossAxisSpacing: 20,
+                            mainAxisSpacing: 20,
+                            crossAxisCount: 2,
+                            children: <Widget>[
+                              pushUpButton(),
+                              squatButton(),
+                              jumpingJackButton()
+                            ],
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
