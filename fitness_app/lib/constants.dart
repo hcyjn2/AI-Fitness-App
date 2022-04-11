@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tuple/tuple.dart';
 
 const Color kPrimaryColor = Color(0xFFF3D27A);
 const Color kSecondaryColor = Color(0xFFDCBE6F);
@@ -60,6 +61,17 @@ String poseClassToString(PoseClass poseClass) {
     return '';
 }
 
+PoseClass stringToPoseClass(String string) {
+  if (string == 'Squat')
+    return PoseClass.classSquat;
+  else if (string == 'Push Up')
+    return PoseClass.classPushUp;
+  else if (string == 'Jumping Jack')
+    return PoseClass.classJumpingJack;
+  else
+    return PoseClass.classPushUp;
+}
+
 String classIdentifierToClassName(String classText) {
   if (classText == classPushUp)
     return 'Push Up';
@@ -109,4 +121,26 @@ bool isValidClass(var input) {
       poseClass == PoseClass.classPushUp);
 
   return out;
+}
+
+List<Tuple2<int, PoseClass>> dailyChallenges = [
+  Tuple2(3, PoseClass.classPushUp),
+  Tuple2(8, PoseClass.classJumpingJack),
+  Tuple2(5, PoseClass.classSquat)
+];
+
+int getExpUpperBound(int level) {
+  if (level == 1) {
+    return 2;
+  } else if (level == 2) {
+    return 18;
+  } else if (level == 3) {
+    return 30;
+  } else if (level == 4) {
+    return 50;
+  } else if (level == 5) {
+    return 1000;
+  } else {
+    return 5000;
+  }
 }

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:camera/camera.dart';
 import 'package:fitness_app/constants.dart';
+import 'package:fitness_app/screens/workout_menu.dart';
 import 'package:fitness_app/services/workout/camera_view.dart';
 import 'package:fitness_app/services/workout/classification/best_record.dart';
 import 'package:fitness_app/services/workout/classification/workout_record.dart';
@@ -9,6 +10,7 @@ import 'package:fitness_app/services/workout/classification/pose_classifier_proc
 import 'package:fitness_app/services/workout/classification/pose_sample.dart';
 import 'package:fitness_app/services/workout/pose_painter.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:tuple/tuple.dart';
@@ -42,6 +44,10 @@ class _WorkoutSessionState extends State<WorkoutSession> {
   bool narration = true;
   List<WorkoutRecord> _workoutRecordList = [];
   List<BestRecord> _bestRecordList = [];
+  int level = 1;
+  bool isLevelUp = false;
+  int currentExperience = 0;
+  int experienceUpperBound = 10;
   DateTime _currentDate =
       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
   final _player = AudioPlayer();
@@ -73,16 +79,23 @@ class _WorkoutSessionState extends State<WorkoutSession> {
     const oneSec = const Duration(seconds: 1);
     _timer = new Timer.periodic(
       oneSec,
-      (Timer timer) {
+      (Timer timer) async {
         if (_countDownDuration <= 0) {
+          _player.play();
           setState(() {
             _state = 1;
             timer.cancel();
             startWorkoutTimer();
           });
         } else {
+          if (_countDownDuration <= 4 && _countDownDuration >= 2)
+            await _player.setAsset('assets/audios/countdown_tick.mp3');
+          else
+            await _player.setAsset('assets/audios/countdown_go.mp3');
           setState(() {
             _countDownDuration--;
+            if (_countDownDuration <= 4 && _countDownDuration >= 2)
+              _player.play();
           });
         }
       },
@@ -178,11 +191,31 @@ class _WorkoutSessionState extends State<WorkoutSession> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var counter = await prefs.getInt('counter') ?? 0;
     var totalWorkoutDone = await prefs.getInt('Total Workout Done') ?? 0;
+    var dailyChallengeExercise = stringToPoseClass(
+        prefs.getString('Daily Challenge Exercise') ?? 'Push Up');
+    var dailyChallengeRep = prefs.getInt('Daily Challenge Rep') ?? 1;
+    var dailyChallengeDone = prefs.getBool('Daily Challenge Done') ?? false;
+
+    currentExperience++;
+    if (currentExperience == experienceUpperBound) {
+      currentExperience = 0;
+      level++;
+      isLevelUp = true;
+    }
+    await prefs.setInt('level', level);
+    await prefs.setInt('currentExperience', currentExperience);
+
+    if (classIdentifierToPoseClass(resultClass.last) ==
+            dailyChallengeExercise &&
+        resultRep.last >= dailyChallengeRep) {
+      dailyChallengeDone = true;
+    }
 
     await prefs.setString(
         'Last Workout Class', classIdentifierToClassName(classIdentifier));
     await prefs.setInt('Last Workout Count', classRepetition);
     await prefs.setInt('Total Workout Done', totalWorkoutDone + 1);
+    await prefs.setBool('Daily Challenge Done', dailyChallengeDone);
 
     _workoutRecordList.add(WorkoutRecord(
         dateTime: _currentDate,
@@ -213,6 +246,11 @@ class _WorkoutSessionState extends State<WorkoutSession> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var counter = await prefs.getInt('counter') ?? 0;
     narration = await prefs.getBool('narration') ?? true;
+
+    //Level System
+    level = await prefs.getInt('level') ?? 1;
+    currentExperience = await prefs.getInt('currentExperience') ?? 0;
+    experienceUpperBound = getExpUpperBound(level);
 
     if (counter < 1) _initSaveData();
 
@@ -266,6 +304,66 @@ class _WorkoutSessionState extends State<WorkoutSession> {
         await _player.setAsset('assets/audios/failed_female.mp3');
       }
       _player.play();
+      Future.delayed(Duration(seconds: 5)).whenComplete(() => {
+            if (isLevelUp)
+              {
+                _player.setAsset('assets/audios/level_up.mp3'),
+                _player.play(),
+              }
+          });
+    }
+
+    Widget buildLevelPanel(int lv) {
+      return WorkoutButton(
+        elevation: 0,
+        color: Colors.grey.withOpacity(0.15),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image(
+                    image: lv == 2
+                        ? AssetImage('assets/images/lv1.png')
+                        : lv == 3
+                            ? AssetImage('assets/images/lv2.png')
+                            : lv == 4
+                                ? AssetImage('assets/images/lv3.png')
+                                : AssetImage('assets/images/lv4.png'),
+                    height: 70,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Icon(
+                      FontAwesomeIcons.arrowRightLong,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  Image(
+                    image: lv == 2
+                        ? AssetImage('assets/images/lv2.png')
+                        : lv == 3
+                            ? AssetImage('assets/images/lv3.png')
+                            : lv == 4
+                                ? AssetImage('assets/images/lv4.png')
+                                : AssetImage('assets/images/lv5.png'),
+                    height: 70,
+                  ),
+                ],
+              ),
+              Text('Level Up! \n You are now Level ' + lv.toString() + '!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.black54,
+                      fontFamily: 'nunito',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w900)),
+            ],
+          ),
+        ),
+      );
     }
 
     return showDialog(
@@ -280,17 +378,50 @@ class _WorkoutSessionState extends State<WorkoutSession> {
                         fontFamily: 'nunito',
                         fontSize: 18,
                         fontWeight: FontWeight.bold))
-                : Text(
-                    'Great Job! \n\n You have just completed a workout. \n' +
-                        className +
-                        ' : ' +
-                        classRepetition +
-                        ' reps. \n Give yourself a pat on the back.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontFamily: 'nunito',
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold)),
+                : Column(
+                    children: [
+                      RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          children: <TextSpan>[
+                            TextSpan(
+                              text: 'Great Job!  \n\n',
+                              style: TextStyle(
+                                  color: Colors.black54,
+                                  fontFamily: 'nunito',
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w900),
+                            ),
+                            TextSpan(
+                              text:
+                                  'You have just completed a workout. \n\n\n\n',
+                              style: TextStyle(
+                                  color: Colors.black54,
+                                  fontFamily: 'nunito',
+                                  fontSize: 19,
+                                  fontWeight: FontWeight.w900),
+                            ),
+                            TextSpan(
+                                text: className +
+                                    ' : ' +
+                                    classRepetition +
+                                    ' reps.\n\n\n',
+                                style: TextStyle(
+                                    color: Colors.black54,
+                                    fontFamily: 'nunito',
+                                    fontSize: 21,
+                                    fontWeight: FontWeight.w900,
+                                    background: Paint()
+                                      ..strokeWidth = 30.0
+                                      ..color = Colors.grey.withOpacity(0.15)
+                                      ..style = PaintingStyle.stroke
+                                      ..strokeJoin = StrokeJoin.round)),
+                          ],
+                        ),
+                      ),
+                      isLevelUp ? buildLevelPanel(level) : Text(''),
+                    ],
+                  ),
             elevation: 25.0,
             content: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -300,9 +431,10 @@ class _WorkoutSessionState extends State<WorkoutSession> {
                   color: Colors.grey,
                   child: Text('BACK',
                       style: TextStyle(
+                          color: Colors.white,
                           fontFamily: 'nunito',
                           fontSize: 15,
-                          fontWeight: FontWeight.bold)),
+                          fontWeight: FontWeight.w900)),
                   onPressed: () async {
                     await poseDetector.close();
                     setState(() {
@@ -383,6 +515,15 @@ class _WorkoutSessionState extends State<WorkoutSession> {
                     } else {
                       return Container(
                         color: kPrimaryColor,
+                        child: Center(
+                            child: Text(
+                          'Loading...',
+                          style: TextStyle(
+                              fontFamily: 'nunito',
+                              fontSize: 20,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold),
+                        )),
                       );
                     }
                   },

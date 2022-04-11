@@ -11,9 +11,9 @@ import 'package:tuple/tuple.dart';
 
 const tag = "PoseClassifier";
 // "Smaller amount indicates better Sensitivity and Vice Versa"
-const defaultMaxDistanceTopK = 29;
+const defaultMaxDistanceTopK = 30;
 // "Smaller amount indicates lesser Sensitivity and Vice Versa"
-const defaultMeanDistanceTopK = 10;
+const defaultMeanDistanceTopK = 9;
 
 class PoseClassifier {
   final List<PoseSample> __poseSamples;
@@ -23,11 +23,11 @@ class PoseClassifier {
   final PoseClass __poseClass;
 
   PoseClassifier(
-    this.__poseSamples, this.__poseClass,[
+    this.__poseSamples,
+    this.__poseClass, [
     this.__maxDistanceTopK = defaultMaxDistanceTopK,
     this.__meanDistanceTopK = defaultMeanDistanceTopK,
   ]) {
-
     // Z has a lower weight as it is generally less accurate than X & Y.
     __axesWeights = PoseLandmark(PoseLandmarkType.nose, 1, 1, 0.2, 1);
   }
@@ -48,7 +48,6 @@ class PoseClassifier {
     return landmarks;
   }
 
-
   /**
    * Returns the max range of confidence values.
    *
@@ -65,21 +64,38 @@ class PoseClassifier {
   ClassificationResult classify(List<PoseLandmark> landmarks) {
     ClassificationResult result = new ClassificationResult();
 
-    ClassificationResult evaluateAnkleJointAngle(List<PoseLandmark> landmarks, ClassificationResult result)  {
-      int leftKneeJoint = PoseEmbedding.getJointAngle(landmarks.elementAt(PoseLandmarkType.leftHip.index), landmarks.elementAt(PoseLandmarkType.leftKnee.index), landmarks.elementAt(PoseLandmarkType.leftAnkle.index));
-      int rightKneeJoint = PoseEmbedding.getJointAngle(landmarks.elementAt(PoseLandmarkType.rightHip.index), landmarks.elementAt(PoseLandmarkType.rightKnee.index), landmarks.elementAt(PoseLandmarkType.rightAnkle.index));
-      int leftAnkleJoint = PoseEmbedding.getJointAngle(landmarks.elementAt(PoseLandmarkType.leftKnee.index), landmarks.elementAt(PoseLandmarkType.leftAnkle.index), landmarks.elementAt(PoseLandmarkType.leftFootIndex.index));
-      int rightAnkleJoint = PoseEmbedding.getJointAngle(landmarks.elementAt(PoseLandmarkType.rightKnee.index), landmarks.elementAt(PoseLandmarkType.rightAnkle.index), landmarks.elementAt(PoseLandmarkType.rightFootIndex.index));
+    ClassificationResult evaluateAnkleJointAngle(
+        List<PoseLandmark> landmarks, ClassificationResult result) {
+      int leftKneeJoint = PoseEmbedding.getJointAngle(
+          landmarks.elementAt(PoseLandmarkType.leftHip.index),
+          landmarks.elementAt(PoseLandmarkType.leftKnee.index),
+          landmarks.elementAt(PoseLandmarkType.leftAnkle.index));
+      int rightKneeJoint = PoseEmbedding.getJointAngle(
+          landmarks.elementAt(PoseLandmarkType.rightHip.index),
+          landmarks.elementAt(PoseLandmarkType.rightKnee.index),
+          landmarks.elementAt(PoseLandmarkType.rightAnkle.index));
+      int leftAnkleJoint = PoseEmbedding.getJointAngle(
+          landmarks.elementAt(PoseLandmarkType.leftKnee.index),
+          landmarks.elementAt(PoseLandmarkType.leftAnkle.index),
+          landmarks.elementAt(PoseLandmarkType.leftFootIndex.index));
+      int rightAnkleJoint = PoseEmbedding.getJointAngle(
+          landmarks.elementAt(PoseLandmarkType.rightKnee.index),
+          landmarks.elementAt(PoseLandmarkType.rightAnkle.index),
+          landmarks.elementAt(PoseLandmarkType.rightFootIndex.index));
 
       // Able to identify the angles but not consistently
-      if(leftAnkleJoint > 177 && leftAnkleJoint <= 195 && rightAnkleJoint <= 180 && leftKneeJoint >= 172 && leftKneeJoint <= 185 &&  rightKneeJoint >= 172 && rightKneeJoint <= 185){
-        print('*************************JUMPSQUAT DOWN***************************');
-        result.incrementClassConfidence('jumpsquats_down');
-      }
+      // if (leftAnkleJoint > 177 &&
+      //     leftAnkleJoint <= 195 &&
+      //     rightAnkleJoint <= 180 &&
+      //     leftKneeJoint >= 172 &&
+      //     leftKneeJoint <= 185 &&
+      //     rightKneeJoint >= 172 &&
+      //     rightKneeJoint <= 185) {
+      //   result.incrementClassConfidence('jumpsquats_down');
+      // }
 
       return result;
     }
-
 
     // Return early if no landmarks detected.
     if (landmarks.isEmpty) {
@@ -93,7 +109,8 @@ class PoseClassifier {
     }
 
     // TODO
-    List<PoseLandmark> embedding = PoseEmbedding.getPoseEmbedding(landmarks, __poseClass);
+    List<PoseLandmark> embedding =
+        PoseEmbedding.getPoseEmbedding(landmarks, __poseClass);
     List<PoseLandmark> flippedEmbedding =
         PoseEmbedding.getPoseEmbedding(flippedLandmarks, __poseClass);
 
@@ -181,7 +198,7 @@ class PoseClassifier {
       result.incrementClassConfidence(className);
     }
 
-    result = evaluateAnkleJointAngle(landmarks, result);
+    // result = evaluateAnkleJointAngle(landmarks, result);
 
     return result;
   }

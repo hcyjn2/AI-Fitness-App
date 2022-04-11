@@ -44,6 +44,7 @@ dependencies:
   charts_painter: ^2.0.0+1
   showcaseview: ^1.1.5
   toggle_switch: ^1.4.0
+  step_progress_indicator: ^1.0.2
 
 dev_dependencies:
   flutter_test:

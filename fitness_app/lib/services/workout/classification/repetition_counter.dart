@@ -2,8 +2,8 @@ import 'package:fitness_app/services/workout/classification/classification_resul
 
 // These thresholds can be tuned in conjunction with the Top K values in {@link PoseClassifier}.
 // The default Top K value is 10 so the range here is [0-10].
-const defaultEnterThreshold = 6.0;
-const defaultExitThreshold = 4.0;
+const defaultEnterThreshold = 6.2;
+const defaultExitThreshold = 3.8;
 
 class RepetitionCounter {
   final String __className;
