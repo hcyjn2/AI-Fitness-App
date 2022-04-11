@@ -131,7 +131,7 @@ List<Tuple2<int, PoseClass>> dailyChallenges = [
 
 int getExpUpperBound(int level) {
   if (level == 1) {
-    return 2;
+    return 10;
   } else if (level == 2) {
     return 18;
   } else if (level == 3) {
