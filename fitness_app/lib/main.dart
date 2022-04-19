@@ -1,6 +1,7 @@
 import 'package:camera/camera.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:fitness_app/constants.dart';
+import 'package:fitness_app/screens/achievement.dart';
 import 'package:fitness_app/screens/scoreboard.dart';
 import 'package:fitness_app/screens/main_menu.dart';
 import 'package:fitness_app/screens/workout_calibration.dart';
@@ -57,6 +58,9 @@ class _MyAppState extends State<MyApp> {
             builder: (context) => menuContent(),
           ),
         ),
+        routes: {
+          '/achievement': (context) => const Achievement(),
+        },
         onGenerateRoute: (settings) {
           if (settings.name == '/workoutcalibration') {
             return MaterialPageRoute(

@@ -87,7 +87,8 @@ class PoseEmbedding {
 
     // We group our distances by number of joints between the pairs.
 
-    if (poseClass == PoseClass.classPushUp) {
+    if (poseClass == PoseClass.classPushUp ||
+        poseClass == PoseClass.classPushUpBackSlouching) {
       // One joint.
       embedding.add(Utils.subtract(
           Utils.average(landmark.elementAt(PoseLandmarkType.leftHip.index),
@@ -96,85 +97,52 @@ class PoseEmbedding {
               landmark.elementAt(PoseLandmarkType.rightShoulder.index))));
 
       embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.leftShoulder.index),
-          landmark.elementAt(PoseLandmarkType.leftElbow.index)));
+          landmark.elementAt(PoseLandmarkType.leftEar.index),
+          landmark.elementAt(PoseLandmarkType.leftHip.index)));
       embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.rightShoulder.index),
-          landmark.elementAt(PoseLandmarkType.rightElbow.index)));
-
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.leftElbow.index),
-          landmark.elementAt(PoseLandmarkType.leftWrist.index)));
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.rightElbow.index),
-          landmark.elementAt(PoseLandmarkType.rightWrist.index)));
-
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.leftHip.index),
-          landmark.elementAt(PoseLandmarkType.leftKnee.index)));
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.rightHip.index),
-          landmark.elementAt(PoseLandmarkType.rightKnee.index)));
-
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.leftKnee.index),
-          landmark.elementAt(PoseLandmarkType.leftAnkle.index)));
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.rightKnee.index),
-          landmark.elementAt(PoseLandmarkType.rightAnkle.index)));
-
-      // Two joints.
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.leftShoulder.index),
-          landmark.elementAt(PoseLandmarkType.leftWrist.index)));
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.rightShoulder.index),
-          landmark.elementAt(PoseLandmarkType.rightWrist.index)));
-
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.leftHip.index),
-          landmark.elementAt(PoseLandmarkType.leftAnkle.index)));
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.rightHip.index),
-          landmark.elementAt(PoseLandmarkType.rightAnkle.index)));
-
-      // Four joints.
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.leftHip.index),
-          landmark.elementAt(PoseLandmarkType.leftWrist.index)));
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.rightHip.index),
-          landmark.elementAt(PoseLandmarkType.rightWrist.index)));
-
-      // Five joints.
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.leftShoulder.index),
-          landmark.elementAt(PoseLandmarkType.leftAnkle.index)));
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.rightShoulder.index),
-          landmark.elementAt(PoseLandmarkType.rightAnkle.index)));
-
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.leftHip.index),
-          landmark.elementAt(PoseLandmarkType.leftWrist.index)));
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.rightHip.index),
-          landmark.elementAt(PoseLandmarkType.rightWrist.index)));
-
-      // Cross body.
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.leftElbow.index),
-          landmark.elementAt(PoseLandmarkType.rightElbow.index)));
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.leftKnee.index),
-          landmark.elementAt(PoseLandmarkType.rightKnee.index)));
+          landmark.elementAt(PoseLandmarkType.rightEar.index),
+          landmark.elementAt(PoseLandmarkType.rightHip.index)));
 
       embedding.add(Utils.subtract(
           landmark.elementAt(PoseLandmarkType.leftWrist.index),
-          landmark.elementAt(PoseLandmarkType.rightWrist.index)));
+          landmark.elementAt(PoseLandmarkType.leftHip.index)));
       embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.leftAnkle.index),
-          landmark.elementAt(PoseLandmarkType.rightAnkle.index)));
+          landmark.elementAt(PoseLandmarkType.rightWrist.index),
+          landmark.elementAt(PoseLandmarkType.rightHip.index)));
+
+      embedding.add(Utils.subtract(
+          landmark.elementAt(PoseLandmarkType.leftWrist.index),
+          landmark.elementAt(PoseLandmarkType.leftEar.index)));
+      embedding.add(Utils.subtract(
+          landmark.elementAt(PoseLandmarkType.rightWrist.index),
+          landmark.elementAt(PoseLandmarkType.rightEar.index)));
+
+      embedding.add(Utils.subtract(
+          landmark.elementAt(PoseLandmarkType.leftWrist.index),
+          landmark.elementAt(PoseLandmarkType.nose.index)));
+      embedding.add(Utils.subtract(
+          landmark.elementAt(PoseLandmarkType.rightWrist.index),
+          landmark.elementAt(PoseLandmarkType.nose.index)));
+
+      // Two joints.
+      embedding.add(Utils.subtract(
+          landmark.elementAt(PoseLandmarkType.leftElbow.index),
+          landmark.elementAt(PoseLandmarkType.rightElbow.index)));
+
+      embedding.add(Utils.subtract(
+          landmark.elementAt(PoseLandmarkType.leftElbow.index),
+          landmark.elementAt(PoseLandmarkType.leftEar.index)));
+      embedding.add(Utils.subtract(
+          landmark.elementAt(PoseLandmarkType.rightElbow.index),
+          landmark.elementAt(PoseLandmarkType.rightEar.index)));
+
+      // Four joints.
+      embedding.add(Utils.subtract(
+          landmark.elementAt(PoseLandmarkType.leftPinky.index),
+          landmark.elementAt(PoseLandmarkType.leftEar.index)));
+      embedding.add(Utils.subtract(
+          landmark.elementAt(PoseLandmarkType.rightPinky.index),
+          landmark.elementAt(PoseLandmarkType.rightEar.index)));
     } else if (poseClass == PoseClass.classSquat ||
         poseClass == PoseClass.classSquatHalfRep ||
         poseClass == PoseClass.classSquatBackSlouching) {
@@ -190,6 +158,13 @@ class PoseEmbedding {
           landmark.elementAt(PoseLandmarkType.leftFootIndex.index)));
       embedding.add(Utils.subtract(
           landmark.elementAt(PoseLandmarkType.rightElbow.index),
+          landmark.elementAt(PoseLandmarkType.rightFootIndex.index)));
+
+      embedding.add(Utils.subtract(
+          landmark.elementAt(PoseLandmarkType.nose.index),
+          landmark.elementAt(PoseLandmarkType.leftFootIndex.index)));
+      embedding.add(Utils.subtract(
+          landmark.elementAt(PoseLandmarkType.nose.index),
           landmark.elementAt(PoseLandmarkType.rightFootIndex.index)));
 
       embedding.add(Utils.subtract(
@@ -261,13 +236,6 @@ class PoseEmbedding {
 
       embedding.add(Utils.subtract(
           landmark.elementAt(PoseLandmarkType.leftIndex.index),
-          landmark.elementAt(PoseLandmarkType.leftShoulder.index)));
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.rightIndex.index),
-          landmark.elementAt(PoseLandmarkType.rightShoulder.index)));
-
-      embedding.add(Utils.subtract(
-          landmark.elementAt(PoseLandmarkType.leftIndex.index),
           landmark.elementAt(PoseLandmarkType.leftHip.index)));
       embedding.add(Utils.subtract(
           landmark.elementAt(PoseLandmarkType.rightIndex.index),
@@ -279,54 +247,15 @@ class PoseEmbedding {
       embedding.add(Utils.subtract(
           landmark.elementAt(PoseLandmarkType.rightElbow.index),
           landmark.elementAt(PoseLandmarkType.nose.index)));
+
+      embedding.add(Utils.subtract(
+          landmark.elementAt(PoseLandmarkType.leftAnkle.index),
+          landmark.elementAt(PoseLandmarkType.rightAnkle.index)));
+      embedding.add(Utils.subtract(
+          landmark.elementAt(PoseLandmarkType.leftKnee.index),
+          landmark.elementAt(PoseLandmarkType.rightKnee.index)));
     }
 
     return embedding;
   }
 }
-
-// if (poseClass == PoseClass.classSquat ||
-// poseClass == PoseClass.classJumpSquat) {
-// // One joint.
-// embedding.add(Utils.subtract(
-// Utils.average(landmark.elementAt(PoseLandmarkType.leftHip.index),
-// landmark.elementAt(PoseLandmarkType.rightHip.index)),
-// Utils.average(landmark.elementAt(PoseLandmarkType.leftShoulder.index),
-// landmark.elementAt(PoseLandmarkType.rightShoulder.index))));
-//
-// // Wrist & Index Finger
-// embedding.add(Utils.multiplyWithDouble(
-// Utils.subtract(landmark.elementAt(PoseLandmarkType.leftWrist.index),
-// landmark.elementAt(PoseLandmarkType.leftIndex.index)),
-// 2));
-// embedding.add(Utils.multiplyWithDouble(
-// Utils.subtract(landmark.elementAt(PoseLandmarkType.rightWrist.index),
-// landmark.elementAt(PoseLandmarkType.rightIndex.index)),
-// 2));
-//
-// // Heel & Foot
-// embedding.add(Utils.multiplyWithDouble(
-// Utils.subtract(landmark.elementAt(PoseLandmarkType.leftHeel.index),
-// landmark.elementAt(PoseLandmarkType.leftFootIndex.index)),
-// 5));
-// embedding.add(Utils.multiplyWithDouble(
-// Utils.subtract(landmark.elementAt(PoseLandmarkType.rightHeel.index),
-// landmark.elementAt(PoseLandmarkType.rightFootIndex.index)),
-// 5));
-//
-// // Ankle & Foot
-// embedding.add(Utils.subtract(
-// landmark.elementAt(PoseLandmarkType.leftAnkle.index),
-// landmark.elementAt(PoseLandmarkType.leftFootIndex.index)));
-// embedding.add(Utils.subtract(
-// landmark.elementAt(PoseLandmarkType.rightAnkle.index),
-// landmark.elementAt(PoseLandmarkType.rightFootIndex.index)));
-//
-// // Knee & Foot
-// embedding.add(Utils.subtract(
-// landmark.elementAt(PoseLandmarkType.leftKnee.index),
-// landmark.elementAt(PoseLandmarkType.leftFootIndex.index)));
-// embedding.add(Utils.subtract(
-// landmark.elementAt(PoseLandmarkType.rightKnee.index),
-// landmark.elementAt(PoseLandmarkType.rightFootIndex.index)));
-// }

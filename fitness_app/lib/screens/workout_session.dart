@@ -2,13 +2,13 @@ import 'dart:async';
 
 import 'package:camera/camera.dart';
 import 'package:fitness_app/constants.dart';
-import 'package:fitness_app/screens/workout_menu.dart';
 import 'package:fitness_app/services/workout/camera_view.dart';
 import 'package:fitness_app/services/workout/classification/best_record.dart';
 import 'package:fitness_app/services/workout/classification/workout_record.dart';
 import 'package:fitness_app/services/workout/classification/pose_classifier_processor.dart';
 import 'package:fitness_app/services/workout/classification/pose_sample.dart';
 import 'package:fitness_app/services/workout/pose_painter.dart';
+import 'package:fitness_app/widgets/workout_button.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
@@ -44,6 +44,7 @@ class _WorkoutSessionState extends State<WorkoutSession> {
   bool narration = true;
   List<WorkoutRecord> _workoutRecordList = [];
   List<BestRecord> _bestRecordList = [];
+  // Level System
   int level = 1;
   bool isLevelUp = false;
   int currentExperience = 0;
@@ -273,6 +274,15 @@ class _WorkoutSessionState extends State<WorkoutSession> {
     String className = 'null';
     String classRepetition = 'null';
 
+    print('# Log');
+    print(resultClass.length);
+    print('# Last');
+    print(resultClass.last);
+    print(resultRep.last);
+    print('# -2');
+    print(resultClass[resultClass.length - 2]);
+    print(resultRep[resultClass.length - 2]);
+
     if (resultClass.isNotEmpty) {
       if (isValidClass(resultClass.last)) {
         updateBestRecord(resultClass.last, resultRep.last, _bestRecordList);
@@ -280,17 +290,29 @@ class _WorkoutSessionState extends State<WorkoutSession> {
 
         className = classIdentifierToClassName(resultClass.last);
         classRepetition = resultRep.last.toString();
+      } else if (resultClass.length == 2) {
+        if (isValidClass(resultClass[resultClass.length - 2])) {
+          String validClass = resultClass[resultClass.length - 2];
+          int validRep = resultRep[resultClass.length - 2];
+
+          updateBestRecord(validClass, validRep, _bestRecordList);
+          await _saveWorkoutData(validClass, validRep);
+
+          className = classIdentifierToClassName(validClass);
+          classRepetition = validRep.toString();
+        }
       } else {
         for (int i = 2; i < resultClass.length; i++) {
-          if (isValidClass(resultClass.elementAt(resultClass.length - i))) {
-            var validClass = resultClass.elementAt(resultClass.length - i);
-            var validRep = resultRep.elementAt(resultClass.length - i);
+          if (isValidClass(resultClass[resultClass.length - i])) {
+            String validClass = resultClass[resultClass.length - i];
+            int validRep = resultRep[resultClass.length - i];
 
             updateBestRecord(validClass, validRep, _bestRecordList);
             await _saveWorkoutData(validClass, validRep);
 
             className = classIdentifierToClassName(validClass);
             classRepetition = validRep.toString();
+
             break;
           }
         }
@@ -298,9 +320,9 @@ class _WorkoutSessionState extends State<WorkoutSession> {
     }
 
     if (narration) {
-      if (resultClass.isNotEmpty) {
+      if (resultClass.isNotEmpty && isValidClass(className)) {
         await _player.setAsset('assets/audios/completed_female.mp3');
-      } else if (resultClass.isEmpty) {
+      } else if ((resultClass.isEmpty || className == 'null')) {
         await _player.setAsset('assets/audios/failed_female.mp3');
       }
       _player.play();
@@ -371,14 +393,8 @@ class _WorkoutSessionState extends State<WorkoutSession> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: resultClass.isEmpty
-                ? Text('No Worries, You can do better next time!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        fontFamily: 'nunito',
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold))
-                : Column(
+            title: (resultClass.isNotEmpty && isValidClass(className))
+                ? Column(
                     children: [
                       RichText(
                         textAlign: TextAlign.center,
@@ -421,7 +437,13 @@ class _WorkoutSessionState extends State<WorkoutSession> {
                       ),
                       isLevelUp ? buildLevelPanel(level) : Text(''),
                     ],
-                  ),
+                  )
+                : Text('No Worries, You can do better next time!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontFamily: 'nunito',
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold)),
             elevation: 25.0,
             content: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -476,27 +498,60 @@ class _WorkoutSessionState extends State<WorkoutSession> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: _state == 1
-          ? Padding(
-              padding: const EdgeInsets.only(top: 14.5),
-              child: Container(
-                height: 98,
-                width: 98,
-                child: FittedBox(
-                  child: FloatingActionButton(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(13.9))),
-                    onPressed: () {},
-                    backgroundColor: Colors.black.withOpacity(0.7),
-                    child: Text(
-                      _workoutDuration.toString(),
-                      style: TextStyle(
-                          fontFamily: 'nunito',
-                          fontSize: 32,
-                          fontWeight: FontWeight.w900),
+          ? Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 13),
+                  child: Container(
+                    height: 90,
+                    width: 90,
+                    child: FittedBox(
+                      child: FloatingActionButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(13.9))),
+                        onPressed: () {},
+                        backgroundColor: Colors.black.withOpacity(0.7),
+                        child: Text(
+                          _workoutDuration.toString(),
+                          style: TextStyle(
+                              fontFamily: 'nunito',
+                              fontSize: 32,
+                              fontWeight: FontWeight.w900),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 13),
+                  child: Container(
+                    height: 86,
+                    width: 86,
+                    child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(13.9),
+                          color: Colors.white.withOpacity(0.3),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Image(
+                              image: widget.poseClass == PoseClass.classSquat
+                                  ? AssetImage('assets/images/squat.png')
+                                  : widget.poseClass ==
+                                          PoseClass.classJumpingJack
+                                      ? AssetImage(
+                                          'assets/images/jumpingJack.png')
+                                      : widget.poseClass ==
+                                              PoseClass.classPushUp
+                                          ? AssetImage(
+                                              'assets/images/pushUp.png')
+                                          : AssetImage(
+                                              'assets/images/pushUp.png')),
+                        )),
+                  ),
+                ),
+              ],
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
@@ -511,7 +566,11 @@ class _WorkoutSessionState extends State<WorkoutSession> {
                   future: future,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
-                      return buildBody(_state);
+                      return Stack(
+                        children: [
+                          buildBody(_state),
+                        ],
+                      );
                     } else {
                       return Container(
                         color: kPrimaryColor,
@@ -575,3 +634,40 @@ class _WorkoutSessionState extends State<WorkoutSession> {
     }
   }
 }
+
+// combo system WIP
+// if (resultClass.isNotEmpty) {
+// if (isValidClass(resultClass.last) && comboInit == false) {
+// comboCounter++;
+// comboInit = true;
+// startComboTimer(comboInit);
+// } else if (isValidClass(resultClass.last) && comboInit == true) {
+// comboTimer.cancel();
+// comboCounter++;
+// startComboTimer(comboInit);
+// }
+// }
+// Combo System
+// int comboCounter = 0;
+// int comboDuration = 0;
+// bool comboInit = false;
+// late Timer comboTimer;
+// void startComboTimer(bool comboInit) async {
+//   comboDuration = 3;
+//   const oneSec = const Duration(seconds: 1);
+//   comboTimer = new Timer.periodic(
+//     oneSec,
+//         (Timer timer) {
+//       if (comboDuration <= 0) {
+//         setState(() {
+//           comboInit = false;
+//           timer.cancel();
+//         });
+//       } else {
+//         setState(() {
+//           comboDuration--;
+//         });
+//       }
+//     },
+//   );
+// }

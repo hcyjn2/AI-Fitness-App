@@ -188,6 +188,10 @@ class PosePainter extends CustomPainter {
           PoseClass.classJumpingJackBentArm) {
         properForm = false;
         adviceText = 'Keep your Elbows Straight!';
+      } else if (classIdentifierToPoseClass(resultClass.last) ==
+          PoseClass.classPushUpBackSlouching) {
+        properForm = false;
+        adviceText = 'Keep your back Straight!';
       }
     }
 

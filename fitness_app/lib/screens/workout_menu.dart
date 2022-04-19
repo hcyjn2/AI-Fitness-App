@@ -1,6 +1,7 @@
 import 'package:fitness_app/screens/settings.dart';
 import 'package:fitness_app/widgets/custom_card.dart';
 import 'package:fitness_app/widgets/custom_elevated_button.dart';
+import 'package:fitness_app/widgets/workout_button.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -117,7 +118,7 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
                               child: Showcase(
                                 key: _key5,
                                 description:
-                                    'This navigates you to the Setting page, where you can turn off/on Narration during Workout.',
+                                    'This navigates you to the Setting Page, where you can Turn Off/On Narration during Workout.',
                                 shapeBorder: const RoundedRectangleBorder(),
                                 overlayPadding: EdgeInsets.all(8),
                                 contentPadding: EdgeInsets.all(20),
@@ -235,14 +236,21 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
             contentPadding: EdgeInsets.fromLTRB(24, 10, 24, 0),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            title: Text(
-              'Squat Demonstration',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontFamily: 'nunito',
-                  fontSize: 23,
-                  fontWeight: FontWeight.w900,
-                  color: kPrimaryColor),
+            title: WorkoutButton(
+              color: kAccentColor.withOpacity(0.3),
+              elevation: 0,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                child: Text(
+                  'Squat Demonstration',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontFamily: 'nunito',
+                      fontSize: 23,
+                      fontWeight: FontWeight.w900,
+                      color: kPrimaryColor),
+                ),
+              ),
             ),
             content: Container(
               height: 600,
@@ -322,14 +330,21 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
             contentPadding: EdgeInsets.fromLTRB(24, 10, 24, 0),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            title: Text(
-              'Push Up Demonstration',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontFamily: 'nunito',
-                  fontSize: 23,
-                  fontWeight: FontWeight.w900,
-                  color: kPrimaryColor),
+            title: WorkoutButton(
+              color: kAccentColor.withOpacity(0.3),
+              elevation: 0,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                child: Text(
+                  'Push Up Demonstration',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontFamily: 'nunito',
+                      fontSize: 23,
+                      fontWeight: FontWeight.w900,
+                      color: kPrimaryColor),
+                ),
+              ),
             ),
             content: Container(
               height: 600,
@@ -409,14 +424,21 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
             contentPadding: EdgeInsets.fromLTRB(24, 10, 24, 0),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            title: Text(
-              'Jumping Jack Demonstration',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontFamily: 'nunito',
-                  fontSize: 23,
-                  fontWeight: FontWeight.w900,
-                  color: kPrimaryColor),
+            title: WorkoutButton(
+              color: kAccentColor.withOpacity(0.3),
+              elevation: 0,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5.0),
+                child: Text(
+                  'Jumping Jack Demonstration',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontFamily: 'nunito',
+                      fontSize: 23,
+                      fontWeight: FontWeight.w900,
+                      color: kPrimaryColor),
+                ),
+              ),
             ),
             content: Container(
               height: 600,
@@ -430,6 +452,7 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
                     child: Column(children: [
                       Image(
                         image: AssetImage('assets/images/jumpingJack.gif'),
+                        height: 370,
                       ),
                       SizedBox(
                         height: 15,
@@ -782,34 +805,3 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
 
 TextStyle workoutStartMessageStyle =
     TextStyle(fontFamily: 'nunito', fontSize: 19, fontWeight: FontWeight.w900);
-
-class WorkoutButton extends StatelessWidget {
-  final Widget child;
-  final Color color;
-  final VoidCallback? onPressed;
-  final double elevation;
-
-  WorkoutButton(
-      {required this.child,
-      required this.color,
-      this.onPressed,
-      this.elevation = 10.0});
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      style: ButtonStyle(
-        enableFeedback: true,
-        elevation: MaterialStateProperty.resolveWith((states) => elevation),
-        backgroundColor: MaterialStateColor.resolveWith((states) => color),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14.0),
-          ),
-        ),
-      ),
-      onPressed: onPressed,
-      child: child,
-    );
-  }
-}

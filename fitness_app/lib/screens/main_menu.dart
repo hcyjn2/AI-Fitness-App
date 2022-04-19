@@ -5,6 +5,7 @@ import 'package:fitness_app/constants.dart';
 import 'package:fitness_app/screens/workout_menu.dart';
 import 'package:fitness_app/services/workout/classification/workout_record.dart';
 import 'package:fitness_app/widgets/custom_card.dart';
+import 'package:fitness_app/widgets/workout_button.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:just_audio/just_audio.dart';
@@ -23,6 +24,7 @@ class _MainMenuState extends State<MainMenu> {
   final _key2 = GlobalKey();
   final _key3 = GlobalKey();
   final _key4 = GlobalKey();
+  final _key5 = GlobalKey();
 
   late Future future;
   late String _lastWorkoutClass;
@@ -255,6 +257,7 @@ class _MainMenuState extends State<MainMenu> {
             _key2,
             _key3,
             _key4,
+            _key5,
           ],
         ),
       );
@@ -353,43 +356,61 @@ class _MainMenuState extends State<MainMenu> {
                                                   .size
                                                   .width *
                                               0.72,
-                                          child: WorkoutButton(
-                                            onPressed: () async {
-                                              if (_dailyChallengeDone == true &&
-                                                  _dailyChallengeChecked ==
-                                                      false) {
-                                                dailyChallengeCompletedAlert();
+                                          child: Showcase(
+                                            key: _key2,
+                                            description:
+                                                'After Completing Daily Challenge, \n\n This Button will turn Yellow \n\n & You may Press it to Obtain EXP. \n\n Grey = Incomplete. \n Yellow = Press to Obtain EXP.',
+                                            shapeBorder:
+                                                const RoundedRectangleBorder(),
+                                            overlayPadding: EdgeInsets.all(8),
+                                            contentPadding: EdgeInsets.all(20),
+                                            showcaseBackgroundColor:
+                                                kPrimaryColor,
+                                            descTextStyle: TextStyle(
+                                                fontFamily: 'nunito',
+                                                color: Colors.white,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w900),
+                                            child: WorkoutButton(
+                                              onPressed: () async {
+                                                if (_dailyChallengeDone ==
+                                                        true &&
+                                                    _dailyChallengeChecked ==
+                                                        false) {
+                                                  dailyChallengeCompletedAlert();
 
-                                                setState(() {});
-                                              } else {
-                                                dailyChallengeNotCompletedAlert();
-                                              }
-                                            },
-                                            elevation: 3.5,
-                                            color: _dailyChallengeDone
-                                                ? kPrimaryColor
-                                                : Colors.grey,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 5.0),
-                                              child: Text(
-                                                _dailyChallengeRep.toString() +
-                                                    ' x ' +
-                                                    poseClassToString(
-                                                        _dailyChallengeExercise) +
-                                                    's in a Session',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    height: 1.16,
-                                                    color: _dailyChallengeDone
-                                                        ? Colors.white
-                                                        : Colors.white
-                                                            .withOpacity(0.7),
-                                                    fontFamily: 'nunito',
-                                                    fontSize: 20,
-                                                    fontWeight:
-                                                        FontWeight.w900),
+                                                  setState(() {});
+                                                } else {
+                                                  dailyChallengeNotCompletedAlert();
+                                                }
+                                              },
+                                              elevation: 3.5,
+                                              color: _dailyChallengeDone
+                                                  ? kPrimaryColor
+                                                  : Colors.grey,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 5.0),
+                                                child: Text(
+                                                  _dailyChallengeRep
+                                                          .toString() +
+                                                      ' x ' +
+                                                      poseClassToString(
+                                                          _dailyChallengeExercise) +
+                                                      's in a Session',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      height: 1.16,
+                                                      color: _dailyChallengeDone
+                                                          ? Colors.white
+                                                          : Colors.white
+                                                              .withOpacity(0.7),
+                                                      fontFamily: 'nunito',
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.w900),
+                                                ),
                                               ),
                                             ),
                                           ),
@@ -405,7 +426,7 @@ class _MainMenuState extends State<MainMenu> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
                         child: Showcase(
-                          key: _key2,
+                          key: _key3,
                           description:
                               'This shows the Last Workout you have done.',
                           shapeBorder: const RoundedRectangleBorder(),
@@ -458,7 +479,7 @@ class _MainMenuState extends State<MainMenu> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
                         child: Showcase(
-                          key: _key3,
+                          key: _key4,
                           description:
                               'This shows the Total Amount of Workouts you have completed so far.',
                           shapeBorder: const RoundedRectangleBorder(),
@@ -505,7 +526,7 @@ class _MainMenuState extends State<MainMenu> {
                     ],
                   ),
                   Showcase(
-                    key: _key4,
+                    key: _key5,
                     description:
                         'This shows your Workout Activity through out the Week.',
                     shapeBorder: const RoundedRectangleBorder(),
@@ -766,6 +787,7 @@ class _MainMenuState extends State<MainMenu> {
   }
 
   Future dailyChallengeNotCompletedAlert() async {
+    await _player.setVolume(0.8);
     await _player.setAsset('assets/audios/error.mp3');
     _player.play();
 
@@ -773,13 +795,24 @@ class _MainMenuState extends State<MainMenu> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('You have not completed the Daily Challenge yet !',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontFamily: 'nunito',
-                    fontSize: 28,
-                    color: Colors.black54,
-                    fontWeight: FontWeight.w900)),
+            title: Column(
+              children: [
+                Image(
+                  image: AssetImage('assets/images/cross.png'),
+                  height: 100,
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Text('You have not completed the Daily Challenge yet !',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontFamily: 'nunito',
+                        fontSize: 21.5,
+                        color: Colors.black54,
+                        fontWeight: FontWeight.w900)),
+              ],
+            ),
             elevation: 20.0,
           );
         });

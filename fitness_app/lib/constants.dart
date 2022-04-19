@@ -8,6 +8,7 @@ const Color kAccentColor = Color(0xFFFFE296);
 // const Color kSecondaryColor = Color(0xffb6d5bc);
 
 const classPushUp = "pushups_down";
+const classPushUpBackSlouching = "pushupsbackslouching_down";
 const classSquat = "squats_down";
 const classSquatHalfRep = "squatshalfrep_down";
 const classSquatBackSlouching = "squatsbackslouching_down";
@@ -16,6 +17,7 @@ const classJumpingJackBentArm = "jumpingjacksbentarm_down";
 
 const poseClasses = {
   classPushUp,
+  classPushUpBackSlouching,
   classSquat,
   classSquatHalfRep,
   classSquatBackSlouching,
@@ -31,6 +33,7 @@ const poseClassesWithoutVariation = {
 
 enum PoseClass {
   classPushUp,
+  classPushUpBackSlouching,
   classSquat,
   classSquatHalfRep,
   classSquatBackSlouching,
@@ -53,6 +56,8 @@ String poseClassToString(PoseClass poseClass) {
     return 'Squat(Back Slouch)';
   else if (poseClass == PoseClass.classPushUp)
     return 'Push Up';
+  else if (poseClass == PoseClass.classPushUp)
+    return 'Push Up(Back Slouch)';
   else if (poseClass == PoseClass.classJumpingJack)
     return 'Jumping Jack';
   else if (poseClass == PoseClass.classJumpingJackBentArm)
@@ -75,6 +80,8 @@ PoseClass stringToPoseClass(String string) {
 String classIdentifierToClassName(String classText) {
   if (classText == classPushUp)
     return 'Push Up';
+  else if (classText == classPushUpBackSlouching)
+    return 'Push Up(Back Slouch)';
   else if (classText == classSquat)
     return 'Squat';
   else if (classText == classSquatHalfRep)
@@ -92,6 +99,9 @@ String classIdentifierToClassName(String classText) {
 PoseClass classIdentifierToPoseClass(String classText) {
   if (classText == 'pushups_down' || classText == 'pushups_up')
     return PoseClass.classPushUp;
+  else if (classText == 'pushupsbackslouching_down' ||
+      classText == 'pushups_up')
+    return PoseClass.classPushUpBackSlouching;
   else if (classText == 'squats_down' || classText == 'squats_up')
     return PoseClass.classSquat;
   else if (classText == 'squatshalfrep_down' || classText == 'squats_up')

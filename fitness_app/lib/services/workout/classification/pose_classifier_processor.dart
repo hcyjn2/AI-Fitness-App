@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:math';
 
 import 'package:fitness_app/services/workout/classification/classification_result.dart';
 import 'package:fitness_app/services/workout/classification/ema_smoothing.dart';
@@ -23,6 +24,7 @@ class PoseClassifierProcessor {
   late List<String> resultClass;
   late List<int> resultRep;
   final PoseClass __poseClass;
+  bool effect = false;
   final _player = AudioPlayer();
 
   PoseClassifierProcessor(this.__isStreamMode, this.__poseSamples,
@@ -97,7 +99,6 @@ class PoseClassifierProcessor {
         if (repsAfter > repsBefore) {
           resultClass.add(repCounter.className);
           resultRep.add(repsAfter);
-
           if (__narration) {
             if (classIdentifierToPoseClass(repCounter.className) ==
                 PoseClass.classJumpingJackBentArm) {
@@ -107,7 +108,18 @@ class PoseClassifierProcessor {
               await _player.setAsset('assets/audios/halfrep_female.mp3');
             } else if (classIdentifierToPoseClass(repCounter.className) ==
                 PoseClass.classSquatBackSlouching) {
-              await _player.setAsset('assets/audios/backslouch_female.mp3');
+              Random().nextInt(2) == 1
+                  ? await _player
+                      .setAsset('assets/audios/backslouch_female.mp3')
+                  : await _player
+                      .setAsset('assets/audios/pushupbackslouch_female.mp3');
+            } else if (classIdentifierToPoseClass(repCounter.className) ==
+                PoseClass.classPushUpBackSlouching) {
+              Random().nextInt(2) == 1
+                  ? await _player
+                      .setAsset('assets/audios/pushupbackslouch_female.mp3')
+                  : await _player.setAsset(
+                      'assets/audios/pushupbackslouch_alt_female.mp3');
             }
 
             if (isValidClass(repCounter.className)) {
@@ -120,7 +132,10 @@ class PoseClassifierProcessor {
               } else if (repsAfter == 4) {
                 await _player.setAsset('assets/audios/four_female.mp3');
               } else if (repsAfter == 5) {
-                await _player.setAsset('assets/audios/five_female.mp3');
+                Random().nextInt(2) == 1
+                    ? await _player.setAsset('assets/audios/five_female.mp3')
+                    : await _player
+                        .setAsset('assets/audios/five_alt_female.mp3');
               } else if (repsAfter == 6) {
                 await _player.setAsset('assets/audios/six_female.mp3');
               } else if (repsAfter == 7) {
@@ -130,11 +145,23 @@ class PoseClassifierProcessor {
               } else if (repsAfter == 9) {
                 await _player.setAsset('assets/audios/nine_female.mp3');
               } else if (repsAfter == 10) {
-                await _player.setAsset('assets/audios/ten_female.mp3');
+                Random().nextInt(2) == 1
+                    ? await _player.setAsset('assets/audios/ten_female.mp3')
+                    : Random().nextInt(2) == 2
+                        ? await _player
+                            .setAsset('assets/audios/ten_alt1_female.mp3')
+                        : await _player
+                            .setAsset('assets/audios/ten_alt2_female.mp3');
               } else if (repsAfter == 11) {
                 await _player.setAsset('assets/audios/eleven_female.mp3');
               } else if (repsAfter == 12) {
                 await _player.setAsset('assets/audios/twelve_female.mp3');
+              } else if (repsAfter == 13) {
+                await _player.setAsset('assets/audios/thirteen_female.mp3');
+              } else if (repsAfter == 15) {
+                await _player.setAsset('assets/audios/fourteen_female.mp3');
+              } else if (repsAfter == 16) {
+                await _player.setAsset('assets/audios/fifteen_female.mp3');
               } else {
                 await _player.setAsset('assets/audios/ding.mp3');
               }

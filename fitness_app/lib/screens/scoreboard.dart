@@ -1,7 +1,11 @@
+import 'package:fitness_app/screens/achievement.dart';
 import 'package:fitness_app/screens/workout_menu.dart';
 import 'package:fitness_app/services/workout/classification/best_record.dart';
 import 'package:fitness_app/widgets/custom_card.dart';
+import 'package:fitness_app/widgets/workout_button.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
@@ -15,6 +19,7 @@ class ScoreboardScreen extends StatefulWidget {
 
 class _ScoreboardScreenState extends State<ScoreboardScreen> {
   final _key1 = GlobalKey();
+  final _key2 = GlobalKey();
   var scoreboardTutorial = true;
 
   Map<String, int> records = {};
@@ -28,6 +33,8 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
   void initState() {
     super.initState();
     future = _getFuture();
+
+    setState(() {});
   }
 
   Future _scoreboardTutorialOff() async {
@@ -54,6 +61,7 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
             ShowCaseWidget.of(context)!.startShowCase(
               [
                 _key1,
+                _key2,
               ],
             ),
             scoreboardTutorial = false,
@@ -124,31 +132,74 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
                             width: MediaQuery.of(context).size.width * 0.85,
                             child: Padding(
                               padding: const EdgeInsets.only(left: 31.0),
-                              child: WorkoutButton(
-                                elevation: 5,
-                                color: Colors.white.withOpacity(0.95),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image(
-                                        image: generateLevelBadge(level),
-                                        height: 102,
-                                      ),
-                                      SizedBox(
-                                        height: 3,
-                                      ),
-                                      StepProgressIndicator(
-                                        totalSteps: experienceUpperBound,
-                                        currentStep: currentExperience,
-                                        size: 30,
-                                        padding: 0,
-                                        selectedColor: kPrimaryColor,
-                                        unselectedColor: Color(0xFF57524C),
-                                        roundedEdges: Radius.circular(15),
-                                      ),
-                                    ],
+                              child: Showcase(
+                                overlayPadding: EdgeInsets.all(10),
+                                key: _key1,
+                                description:
+                                    'This is the Level and EXP indicator. \n\nPress it to access Achievement page.',
+                                shapeBorder: const RoundedRectangleBorder(),
+                                contentPadding: EdgeInsets.all(20),
+                                showcaseBackgroundColor: kPrimaryColor,
+                                descTextStyle: TextStyle(
+                                    fontFamily: 'nunito',
+                                    color: Colors.white,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w900),
+                                child: WorkoutButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                Achievement())).then((value) {
+                                      future = _getFuture();
+                                      setState(() {});
+                                    });
+                                  },
+                                  elevation: 5,
+                                  color: level == 1
+                                      ? Color(0xFFF0FFF6).withOpacity(0.95)
+                                      : level == 2
+                                          ? Color(0xFFDDEEFF).withOpacity(0.95)
+                                          : level == 3
+                                              ? Color(0xFFDEDAFF)
+                                                  .withOpacity(0.95)
+                                              : level == 4
+                                                  ? Color(0xFFFFE2DA)
+                                                      .withOpacity(0.95)
+                                                  : Color(0xFF262626)
+                                                      .withOpacity(0.95),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Image(
+                                          image: generateLevelBadge(level),
+                                          height: 102,
+                                        ),
+                                        SizedBox(
+                                          height: 3,
+                                        ),
+                                        StepProgressIndicator(
+                                          totalSteps: experienceUpperBound,
+                                          currentStep: currentExperience,
+                                          size: 30,
+                                          padding: 0,
+                                          selectedGradientColor: LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              kSecondaryColor,
+                                              kAccentColor
+                                            ],
+                                          ),
+                                          unselectedColor: Color(0xFF57524C),
+                                          roundedEdges: Radius.circular(15),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
@@ -199,7 +250,7 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
                       return Column(
                         children: [
                           Showcase(
-                            key: _key1,
+                            key: _key2,
                             description:
                                 'This is the scoreboard which shows your High Score on each exercise.',
                             shapeBorder: const RoundedRectangleBorder(),
@@ -258,7 +309,7 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
                                   );
                                 },
                               ),
-                              height: MediaQuery.of(context).size.height * 0.3,
+                              height: MediaQuery.of(context).size.height * 0.38,
                               width: double.infinity,
                               color: Colors.transparent,
                             ),
@@ -280,47 +331,107 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
                   },
                 ),
               ),
-              Expanded(
-                  child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: new Align(
-                    alignment: Alignment.bottomCenter,
-                    child: new Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        TextButton(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: Text(
-                                'Reset',
-                                style: TextStyle(
-                                    fontFamily: 'nunito',
-                                    fontSize: 20,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                            ),
-                            style: ButtonStyle(
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.grey),
-                                shape: MaterialStateProperty.all<
-                                        RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ))),
-                            onPressed: () async {
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              prefs.clear();
+              Row(
+                children: [
+                  Expanded(
+                      child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: new Align(
+                        alignment: Alignment.bottomCenter,
+                        child: new Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            TextButton(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0),
+                                  child: Text(
+                                    'Reset',
+                                    style: TextStyle(
+                                        fontFamily: 'nunito',
+                                        fontSize: 20,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.grey),
+                                    shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ))),
+                                onPressed: () async {
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+                                  prefs.clear();
 
-                              future = _getFuture();
-                              setState(() {});
-                            }),
-                      ],
-                    )),
-              ))
+                                  future = _getFuture();
+                                  setState(() {});
+                                }),
+                          ],
+                        )),
+                  )),
+                  Expanded(
+                      child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: new Align(
+                        alignment: Alignment.bottomCenter,
+                        child: new Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            TextButton(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20.0),
+                                  child: Text(
+                                    'EXP ++',
+                                    style: TextStyle(
+                                        fontFamily: 'nunito',
+                                        fontSize: 20,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Colors.grey),
+                                    shape: MaterialStateProperty.all<
+                                            RoundedRectangleBorder>(
+                                        RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ))),
+                                onPressed: () async {
+                                  bool isLevelUp = false;
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+
+                                  currentExperience++;
+                                  if (currentExperience ==
+                                      experienceUpperBound) {
+                                    currentExperience = 0;
+                                    level++;
+                                    isLevelUp = true;
+
+                                    if (isLevelUp) {
+                                      testAlert(level);
+                                    }
+                                  }
+                                  await prefs.setInt('level', level);
+                                  await prefs.setInt(
+                                      'currentExperience', currentExperience);
+
+                                  future = _getFuture();
+                                  setState(() {});
+                                }),
+                          ],
+                        )),
+                  ))
+                ],
+              )
             ],
           )),
     );
@@ -352,5 +463,82 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
         'assets/images/lv1.png',
       );
     }
+  }
+
+  // For Testing
+  Future testAlert(int Level) async {
+    AudioPlayer _player = AudioPlayer();
+    await _player.setAsset('assets/audios/level_up.mp3');
+    _player.play();
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    Widget buildLevelPanel(int lv) {
+      return WorkoutButton(
+        elevation: 0,
+        color: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 12.0),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image(
+                    image: lv == 2
+                        ? AssetImage('assets/images/lv1.png')
+                        : lv == 3
+                            ? AssetImage('assets/images/lv2.png')
+                            : lv == 4
+                                ? AssetImage('assets/images/lv3.png')
+                                : AssetImage('assets/images/lv4.png'),
+                    height: 70,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Icon(
+                      FontAwesomeIcons.arrowRightLong,
+                      color: Colors.black54,
+                    ),
+                  ),
+                  Image(
+                    image: lv == 2
+                        ? AssetImage('assets/images/lv2.png')
+                        : lv == 3
+                            ? AssetImage('assets/images/lv3.png')
+                            : lv == 4
+                                ? AssetImage('assets/images/lv4.png')
+                                : AssetImage('assets/images/lv5.png'),
+                    height: 70,
+                  ),
+                ],
+              ),
+              Text('Level Up! \n You are now Level ' + lv.toString() + '!',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Colors.black54,
+                      fontFamily: 'nunito',
+                      fontSize: 15,
+                      fontWeight: FontWeight.w900)),
+            ],
+          ),
+        ),
+      );
+    }
+
+    ;
+
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            backgroundColor: kPrimaryColor,
+            title: Padding(
+              padding: const EdgeInsets.all(30.0),
+              child: buildLevelPanel(Level),
+            ),
+            elevation: 20.0,
+          );
+        });
   }
 }
