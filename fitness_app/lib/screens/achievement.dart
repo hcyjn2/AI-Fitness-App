@@ -160,10 +160,14 @@ class _AchievementState extends State<Achievement> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Padding(
-              padding: const EdgeInsets.all(9),
-              child: Image(
-                image: AssetImage('assets/images/first_step.png'),
-                height: 80,
+              padding: const EdgeInsets.all(12),
+              child: CircleAvatar(
+                radius: 41,
+                backgroundColor: Colors.black.withOpacity(0.1),
+                child: Image(
+                  image: AssetImage('assets/images/first_step.png'),
+                  height: 80,
+                ),
               ),
             ),
             Text(
@@ -226,7 +230,7 @@ class _AchievementState extends State<Achievement> {
           children: [
             Image(
               image: AssetImage('assets/images/50_workout.png'),
-              height: 98,
+              height: 105,
             ),
             Text(
               'Champ!',

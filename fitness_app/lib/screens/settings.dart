@@ -134,70 +134,70 @@ class _SettingsState extends State<Settings> {
                                 },
                               ),
                             ),
+                            // SizedBox(
+                            //   height: 45,
+                            // ),
+                            // narration
+                            //     ? Text(
+                            //         'NARRATOR\nTYPE',
+                            //         textAlign: TextAlign.center,
+                            //         style: TextStyle(
+                            //           fontFamily: 'Nunito',
+                            //           fontSize: 30,
+                            //           color: Colors.black45,
+                            //           fontWeight: FontWeight.w900,
+                            //         ),
+                            //       )
+                            //     : Container(),
+                            // SizedBox(
+                            //   height: 15,
+                            // ),
+                            // narration
+                            //     ? Container(
+                            //         decoration: BoxDecoration(
+                            //           borderRadius: BorderRadius.all(
+                            //             Radius.circular(20),
+                            //           ),
+                            //           boxShadow: [
+                            //             BoxShadow(
+                            //               color: Colors.black.withOpacity(0.3),
+                            //               spreadRadius: 1,
+                            //               blurRadius: 3,
+                            //               offset: Offset(0,
+                            //                   0), // changes position of shadow
+                            //             ),
+                            //           ],
+                            //         ),
+                            //         child: ToggleSwitch(
+                            //           minWidth: 90.0,
+                            //           minHeight: 70.0,
+                            //           initialLabelIndex: 1,
+                            //           cornerRadius: 20.0,
+                            //           activeFgColor: Colors.white,
+                            //           inactiveBgColor: Colors.grey,
+                            //           inactiveFgColor: Colors.white70,
+                            //           totalSwitches: 2,
+                            //           icons: [
+                            //             FontAwesomeIcons.male,
+                            //             FontAwesomeIcons.female,
+                            //           ],
+                            //           iconSize: 80.0,
+                            //           activeBgColors: [
+                            //             [Colors.blue, Colors.blueAccent],
+                            //             [Colors.pinkAccent, Colors.pink]
+                            //           ],
+                            //           animate: true,
+                            //           animationDuration: 300,
+                            //           curve: Curves.easeInOutCubic,
+                            //           // animate must be set to true when using custom curve
+                            //           onToggle: (index) {
+                            //             print('switched to: $index');
+                            //           },
+                            //         ),
+                            //       )
+                            //     : Container(),
                             SizedBox(
-                              height: 45,
-                            ),
-                            narration
-                                ? Text(
-                                    'NARRATOR\nTYPE',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontFamily: 'Nunito',
-                                      fontSize: 30,
-                                      color: Colors.black45,
-                                      fontWeight: FontWeight.w900,
-                                    ),
-                                  )
-                                : Container(),
-                            SizedBox(
-                              height: 15,
-                            ),
-                            narration
-                                ? Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.all(
-                                        Radius.circular(20),
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.3),
-                                          spreadRadius: 1,
-                                          blurRadius: 3,
-                                          offset: Offset(0,
-                                              0), // changes position of shadow
-                                        ),
-                                      ],
-                                    ),
-                                    child: ToggleSwitch(
-                                      minWidth: 90.0,
-                                      minHeight: 70.0,
-                                      initialLabelIndex: 1,
-                                      cornerRadius: 20.0,
-                                      activeFgColor: Colors.white,
-                                      inactiveBgColor: Colors.grey,
-                                      inactiveFgColor: Colors.white70,
-                                      totalSwitches: 2,
-                                      icons: [
-                                        FontAwesomeIcons.male,
-                                        FontAwesomeIcons.female,
-                                      ],
-                                      iconSize: 80.0,
-                                      activeBgColors: [
-                                        [Colors.blue, Colors.blueAccent],
-                                        [Colors.pinkAccent, Colors.pink]
-                                      ],
-                                      animate: true,
-                                      animationDuration: 300,
-                                      curve: Curves.easeInOutCubic,
-                                      // animate must be set to true when using custom curve
-                                      onToggle: (index) {
-                                        print('switched to: $index');
-                                      },
-                                    ),
-                                  )
-                                : Container(),
-                            SizedBox(
-                              height: narration ? 50 : 210,
+                              height: 265,
                             ),
                             MaterialButton(
                                 shape: RoundedRectangleBorder(

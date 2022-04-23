@@ -223,7 +223,7 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(25, 35, 0, 0),
+                padding: const EdgeInsets.fromLTRB(25, 55, 0, 0),
                 child: Container(
                   child: Text(
                     '\u00b7 Scoreboard',
@@ -331,107 +331,107 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
                   },
                 ),
               ),
-              Row(
-                children: [
-                  Expanded(
-                      child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: new Align(
-                        alignment: Alignment.bottomCenter,
-                        child: new Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            TextButton(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0),
-                                  child: Text(
-                                    'Reset',
-                                    style: TextStyle(
-                                        fontFamily: 'nunito',
-                                        fontSize: 20,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Colors.grey),
-                                    shape: MaterialStateProperty.all<
-                                            RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ))),
-                                onPressed: () async {
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                  prefs.clear();
-
-                                  future = _getFuture();
-                                  setState(() {});
-                                }),
-                          ],
-                        )),
-                  )),
-                  Expanded(
-                      child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: new Align(
-                        alignment: Alignment.bottomCenter,
-                        child: new Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            TextButton(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0),
-                                  child: Text(
-                                    'EXP ++',
-                                    style: TextStyle(
-                                        fontFamily: 'nunito',
-                                        fontSize: 20,
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            Colors.grey),
-                                    shape: MaterialStateProperty.all<
-                                            RoundedRectangleBorder>(
-                                        RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ))),
-                                onPressed: () async {
-                                  bool isLevelUp = false;
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-
-                                  currentExperience++;
-                                  if (currentExperience ==
-                                      experienceUpperBound) {
-                                    currentExperience = 0;
-                                    level++;
-                                    isLevelUp = true;
-
-                                    if (isLevelUp) {
-                                      testAlert(level);
-                                    }
-                                  }
-                                  await prefs.setInt('level', level);
-                                  await prefs.setInt(
-                                      'currentExperience', currentExperience);
-
-                                  future = _getFuture();
-                                  setState(() {});
-                                }),
-                          ],
-                        )),
-                  ))
-                ],
-              )
+              // Row(
+              //   children: [
+              //     Expanded(
+              //         child: Padding(
+              //       padding: const EdgeInsets.all(20.0),
+              //       child: new Align(
+              //           alignment: Alignment.bottomCenter,
+              //           child: new Row(
+              //             mainAxisAlignment: MainAxisAlignment.center,
+              //             children: <Widget>[
+              //               TextButton(
+              //                   child: Padding(
+              //                     padding: const EdgeInsets.symmetric(
+              //                         horizontal: 20.0),
+              //                     child: Text(
+              //                       'Reset',
+              //                       style: TextStyle(
+              //                           fontFamily: 'nunito',
+              //                           fontSize: 20,
+              //                           color: Colors.white,
+              //                           fontWeight: FontWeight.bold),
+              //                     ),
+              //                   ),
+              //                   style: ButtonStyle(
+              //                       backgroundColor:
+              //                           MaterialStateProperty.all<Color>(
+              //                               Colors.grey),
+              //                       shape: MaterialStateProperty.all<
+              //                               RoundedRectangleBorder>(
+              //                           RoundedRectangleBorder(
+              //                         borderRadius: BorderRadius.circular(15),
+              //                       ))),
+              //                   onPressed: () async {
+              //                     SharedPreferences prefs =
+              //                         await SharedPreferences.getInstance();
+              //                     prefs.clear();
+              //
+              //                     future = _getFuture();
+              //                     setState(() {});
+              //                   }),
+              //             ],
+              //           )),
+              //     )),
+              //     Expanded(
+              //         child: Padding(
+              //       padding: const EdgeInsets.all(20.0),
+              //       child: new Align(
+              //           alignment: Alignment.bottomCenter,
+              //           child: new Row(
+              //             mainAxisAlignment: MainAxisAlignment.center,
+              //             children: <Widget>[
+              //               TextButton(
+              //                   child: Padding(
+              //                     padding: const EdgeInsets.symmetric(
+              //                         horizontal: 20.0),
+              //                     child: Text(
+              //                       'EXP ++',
+              //                       style: TextStyle(
+              //                           fontFamily: 'nunito',
+              //                           fontSize: 20,
+              //                           color: Colors.white,
+              //                           fontWeight: FontWeight.bold),
+              //                     ),
+              //                   ),
+              //                   style: ButtonStyle(
+              //                       backgroundColor:
+              //                           MaterialStateProperty.all<Color>(
+              //                               Colors.grey),
+              //                       shape: MaterialStateProperty.all<
+              //                               RoundedRectangleBorder>(
+              //                           RoundedRectangleBorder(
+              //                         borderRadius: BorderRadius.circular(15),
+              //                       ))),
+              //                   onPressed: () async {
+              //                     bool isLevelUp = false;
+              //                     SharedPreferences prefs =
+              //                         await SharedPreferences.getInstance();
+              //
+              //                     currentExperience++;
+              //                     if (currentExperience ==
+              //                         experienceUpperBound) {
+              //                       currentExperience = 0;
+              //                       level++;
+              //                       isLevelUp = true;
+              //
+              //                       if (isLevelUp) {
+              //                         testAlert(level);
+              //                       }
+              //                     }
+              //                     await prefs.setInt('level', level);
+              //                     await prefs.setInt(
+              //                         'currentExperience', currentExperience);
+              //
+              //                     future = _getFuture();
+              //                     setState(() {});
+              //                   }),
+              //             ],
+              //           )),
+              //     ))
+              //   ],
+              // )
             ],
           )),
     );
