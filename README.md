@@ -29,15 +29,17 @@ How to Run it?
 1. Install Android Studio, Flutter and Dart.
 2. Open Android Studio.
 3. Select Get From Version Control.
+3b. Select Open.
 4. Put the GitHub link(https://github.com/hcyjn2/Fitness-Mobile-App)
-   in the URL section and click Clone. (You will obtain the full project, which haven't been changed since the date of submission.
-   For proofs check version control records)
-5. Create an AVD(skip if you already have one). / Connect an Android device to your pc.
+   in the URL section and click Clone.
+4b. Extract the flutter source code zip file in the submission And Select the extracted folder.
+5. Create an AVD(skip if you already have one).
+5b. Connect an Android device to your pc.
 6. Make sure Dart and Flutter is activated for the current project.
 7. Open the AVD.
-8. Select your AVD / Select your phone and Click on the green play button on the top. 
+8. Select your AVD And Click on the green play button on the top. 
+8b. Select your phone And Click on the green play button on the top.
 9. The app should be running in the AVD / your device.
-
 
 Alternative:
 1. Download the APK from this link https://drive.google.com/file/d/1plRW-GvPdQ2kb_hAPZeXJSjEVsG-9Q0W/view?usp=sharing.
