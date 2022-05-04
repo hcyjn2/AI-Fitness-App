@@ -27,7 +27,6 @@ class _AchievementState extends State<Achievement> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     future = getFuture();
   }

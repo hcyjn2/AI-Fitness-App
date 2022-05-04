@@ -99,6 +99,8 @@ class PoseClassifierProcessor {
         if (repsAfter > repsBefore) {
           resultClass.add(repCounter.className);
           resultRep.add(repsAfter);
+
+          // Play Advice Audio
           if (__narration) {
             if (classIdentifierToPoseClass(repCounter.className) ==
                 PoseClass.classJumpingJackBentArm) {
@@ -122,6 +124,7 @@ class PoseClassifierProcessor {
                       'assets/audios/pushupbackslouch_alt_female.mp3');
             }
 
+            // Play Repetition Counting Audio
             if (isValidClass(repCounter.className)) {
               if (repsAfter == 1) {
                 await _player.setAsset('assets/audios/one_female.mp3');

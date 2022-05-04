@@ -1,5 +1,4 @@
 import 'package:fitness_app/screens/achievement.dart';
-import 'package:fitness_app/screens/workout_menu.dart';
 import 'package:fitness_app/services/workout/classification/best_record.dart';
 import 'package:fitness_app/widgets/custom_card.dart';
 import 'package:fitness_app/widgets/workout_button.dart';
@@ -25,9 +24,10 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
   Map<String, int> records = {};
   late Future future;
   List<BestRecord> _bestRecordList = [];
+
   int level = 1;
   int currentExperience = 0;
-  int experienceUpperBound = 10;
+  int experienceUpperBound = getExpUpperBound(1);
 
   @override
   void initState() {
@@ -331,107 +331,6 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
                   },
                 ),
               ),
-              // Row(
-              //   children: [
-              //     Expanded(
-              //         child: Padding(
-              //       padding: const EdgeInsets.all(20.0),
-              //       child: new Align(
-              //           alignment: Alignment.bottomCenter,
-              //           child: new Row(
-              //             mainAxisAlignment: MainAxisAlignment.center,
-              //             children: <Widget>[
-              //               TextButton(
-              //                   child: Padding(
-              //                     padding: const EdgeInsets.symmetric(
-              //                         horizontal: 20.0),
-              //                     child: Text(
-              //                       'Reset',
-              //                       style: TextStyle(
-              //                           fontFamily: 'nunito',
-              //                           fontSize: 20,
-              //                           color: Colors.white,
-              //                           fontWeight: FontWeight.bold),
-              //                     ),
-              //                   ),
-              //                   style: ButtonStyle(
-              //                       backgroundColor:
-              //                           MaterialStateProperty.all<Color>(
-              //                               Colors.grey),
-              //                       shape: MaterialStateProperty.all<
-              //                               RoundedRectangleBorder>(
-              //                           RoundedRectangleBorder(
-              //                         borderRadius: BorderRadius.circular(15),
-              //                       ))),
-              //                   onPressed: () async {
-              //                     SharedPreferences prefs =
-              //                         await SharedPreferences.getInstance();
-              //                     prefs.clear();
-              //
-              //                     future = _getFuture();
-              //                     setState(() {});
-              //                   }),
-              //             ],
-              //           )),
-              //     )),
-              //     Expanded(
-              //         child: Padding(
-              //       padding: const EdgeInsets.all(20.0),
-              //       child: new Align(
-              //           alignment: Alignment.bottomCenter,
-              //           child: new Row(
-              //             mainAxisAlignment: MainAxisAlignment.center,
-              //             children: <Widget>[
-              //               TextButton(
-              //                   child: Padding(
-              //                     padding: const EdgeInsets.symmetric(
-              //                         horizontal: 20.0),
-              //                     child: Text(
-              //                       'EXP ++',
-              //                       style: TextStyle(
-              //                           fontFamily: 'nunito',
-              //                           fontSize: 20,
-              //                           color: Colors.white,
-              //                           fontWeight: FontWeight.bold),
-              //                     ),
-              //                   ),
-              //                   style: ButtonStyle(
-              //                       backgroundColor:
-              //                           MaterialStateProperty.all<Color>(
-              //                               Colors.grey),
-              //                       shape: MaterialStateProperty.all<
-              //                               RoundedRectangleBorder>(
-              //                           RoundedRectangleBorder(
-              //                         borderRadius: BorderRadius.circular(15),
-              //                       ))),
-              //                   onPressed: () async {
-              //                     bool isLevelUp = false;
-              //                     SharedPreferences prefs =
-              //                         await SharedPreferences.getInstance();
-              //
-              //                     currentExperience++;
-              //                     if (currentExperience ==
-              //                         experienceUpperBound) {
-              //                       currentExperience = 0;
-              //                       level++;
-              //                       isLevelUp = true;
-              //
-              //                       if (isLevelUp) {
-              //                         testAlert(level);
-              //                       }
-              //                     }
-              //                     await prefs.setInt('level', level);
-              //                     await prefs.setInt(
-              //                         'currentExperience', currentExperience);
-              //
-              //                     future = _getFuture();
-              //                     setState(() {});
-              //                   }),
-              //             ],
-              //           )),
-              //     ))
-              //   ],
-              // )
             ],
           )),
     );
@@ -542,3 +441,106 @@ class _ScoreboardScreenState extends State<ScoreboardScreen> {
         });
   }
 }
+
+// To test Level System
+// Row(
+//   children: [
+//     Expanded(
+//         child: Padding(
+//       padding: const EdgeInsets.all(20.0),
+//       child: new Align(
+//           alignment: Alignment.bottomCenter,
+//           child: new Row(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: <Widget>[
+//               TextButton(
+//                   child: Padding(
+//                     padding: const EdgeInsets.symmetric(
+//                         horizontal: 20.0),
+//                     child: Text(
+//                       'Reset',
+//                       style: TextStyle(
+//                           fontFamily: 'nunito',
+//                           fontSize: 20,
+//                           color: Colors.white,
+//                           fontWeight: FontWeight.bold),
+//                     ),
+//                   ),
+//                   style: ButtonStyle(
+//                       backgroundColor:
+//                           MaterialStateProperty.all<Color>(
+//                               Colors.grey),
+//                       shape: MaterialStateProperty.all<
+//                               RoundedRectangleBorder>(
+//                           RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(15),
+//                       ))),
+//                   onPressed: () async {
+//                     SharedPreferences prefs =
+//                         await SharedPreferences.getInstance();
+//                     prefs.clear();
+//
+//                     future = _getFuture();
+//                     setState(() {});
+//                   }),
+//             ],
+//           )),
+//     )),
+//     Expanded(
+//         child: Padding(
+//       padding: const EdgeInsets.all(20.0),
+//       child: new Align(
+//           alignment: Alignment.bottomCenter,
+//           child: new Row(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: <Widget>[
+//               TextButton(
+//                   child: Padding(
+//                     padding: const EdgeInsets.symmetric(
+//                         horizontal: 20.0),
+//                     child: Text(
+//                       'EXP ++',
+//                       style: TextStyle(
+//                           fontFamily: 'nunito',
+//                           fontSize: 20,
+//                           color: Colors.white,
+//                           fontWeight: FontWeight.bold),
+//                     ),
+//                   ),
+//                   style: ButtonStyle(
+//                       backgroundColor:
+//                           MaterialStateProperty.all<Color>(
+//                               Colors.grey),
+//                       shape: MaterialStateProperty.all<
+//                               RoundedRectangleBorder>(
+//                           RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(15),
+//                       ))),
+//                   onPressed: () async {
+//                     bool isLevelUp = false;
+//                     SharedPreferences prefs =
+//                         await SharedPreferences.getInstance();
+//
+//                     currentExperience++;
+//                     if (currentExperience ==
+//                         experienceUpperBound) {
+//                       currentExperience = 0;
+//                       level++;
+//                       isLevelUp = true;
+//
+//                       if (isLevelUp) {
+//                         testAlert(level);
+//                       }
+//                     }
+//                     await prefs.setInt('level', level);
+//                     await prefs.setInt(
+//                         'currentExperience', currentExperience);
+//
+//                     future = _getFuture();
+//                     setState(() {});
+//                   }),
+//             ],
+//           )),
+//     ))
+//   ],
+// )

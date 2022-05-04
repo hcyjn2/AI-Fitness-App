@@ -35,23 +35,24 @@ class _WorkoutSessionState extends State<WorkoutSession> {
   PoseDetector poseDetector =
       GoogleMlKit.vision.poseDetector(poseDetectorOptions: poseDetectorOptions);
   bool isBusy = false;
-  CustomPaint? customPaint;
-  late Future future;
-  List<String> classificationResult = [];
   late PoseClassifierProcessor poseClassifierProcessor;
+  CustomPaint? customPaint;
+  List<String> classificationResult = [];
   List<PoseSample> _poseSamples = [];
-  bool isInit = true;
-  bool narration = true;
   List<WorkoutRecord> _workoutRecordList = [];
   List<BestRecord> _bestRecordList = [];
+  late Future future;
+  bool isInit = true;
+  bool narration = true;
+  DateTime _currentDate =
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+  final _player = AudioPlayer();
+
   // Level System
   int level = 1;
   bool isLevelUp = false;
   int currentExperience = 0;
-  int experienceUpperBound = 10;
-  DateTime _currentDate =
-      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
-  final _player = AudioPlayer();
+  int experienceUpperBound = getExpUpperBound(1);
 
   // 0 = Loading, 1 = Workout Session, 2 = End of Workout
   int _state = 0;
@@ -274,21 +275,12 @@ class _WorkoutSessionState extends State<WorkoutSession> {
     String className = 'null';
     String classRepetition = 'null';
 
-    print('# Log');
-    print(resultClass.length);
-    print('# Last');
-    print(resultClass.last);
-    print(resultRep.last);
-    print('# -2');
-    print(resultClass[resultClass.length - 2]);
-    print(resultRep[resultClass.length - 2]);
-
     if (resultClass.isNotEmpty) {
       if (isValidClass(resultClass.last)) {
         updateBestRecord(resultClass.last, resultRep.last, _bestRecordList);
         await _saveWorkoutData(resultClass.last, resultRep.last);
 
-        className = classIdentifierToClassName(resultClass.last);
+        className = resultClass.last;
         classRepetition = resultRep.last.toString();
       } else if (resultClass.length == 2) {
         if (isValidClass(resultClass[resultClass.length - 2])) {
@@ -298,7 +290,7 @@ class _WorkoutSessionState extends State<WorkoutSession> {
           updateBestRecord(validClass, validRep, _bestRecordList);
           await _saveWorkoutData(validClass, validRep);
 
-          className = classIdentifierToClassName(validClass);
+          className = validClass;
           classRepetition = validRep.toString();
         }
       } else {
@@ -310,7 +302,7 @@ class _WorkoutSessionState extends State<WorkoutSession> {
             updateBestRecord(validClass, validRep, _bestRecordList);
             await _saveWorkoutData(validClass, validRep);
 
-            className = classIdentifierToClassName(validClass);
+            className = validClass;
             classRepetition = validRep.toString();
 
             break;
@@ -323,6 +315,8 @@ class _WorkoutSessionState extends State<WorkoutSession> {
       if (resultClass.isNotEmpty && isValidClass(className)) {
         await _player.setAsset('assets/audios/completed_female.mp3');
       } else if ((resultClass.isEmpty || className == 'null')) {
+        await _player.setAsset('assets/audios/failed_female.mp3');
+      } else {
         await _player.setAsset('assets/audios/failed_female.mp3');
       }
       _player.play();
@@ -418,7 +412,7 @@ class _WorkoutSessionState extends State<WorkoutSession> {
                                   fontWeight: FontWeight.w900),
                             ),
                             TextSpan(
-                                text: className +
+                                text: classIdentifierToClassName(className) +
                                     ' : ' +
                                     classRepetition +
                                     ' reps.\n\n\n',

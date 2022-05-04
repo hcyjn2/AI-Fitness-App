@@ -4,8 +4,6 @@ import 'package:tuple/tuple.dart';
 const Color kPrimaryColor = Color(0xFFF3D27A);
 const Color kSecondaryColor = Color(0xFFDCBE6F);
 const Color kAccentColor = Color(0xFFFFE296);
-// const Color kSecondaryColor = Color(0xffd4bda5);
-// const Color kSecondaryColor = Color(0xffb6d5bc);
 
 const classPushUp = "pushups_down";
 const classPushUpBackSlouching = "pushupsbackslouching_down";
@@ -115,7 +113,7 @@ PoseClass classIdentifierToPoseClass(String classText) {
     return PoseClass.classJumpingJackBentArm;
   else
     print('Error: No such Class.');
-  return PoseClass.classPushUp;
+  return PoseClass.classSquatBackSlouching;
 }
 
 bool isValidClass(var input) {
@@ -134,7 +132,7 @@ bool isValidClass(var input) {
 }
 
 List<Tuple2<int, PoseClass>> dailyChallenges = [
-  Tuple2(3, PoseClass.classPushUp),
+  Tuple2(5, PoseClass.classPushUp),
   Tuple2(8, PoseClass.classJumpingJack),
   Tuple2(5, PoseClass.classSquat)
 ];

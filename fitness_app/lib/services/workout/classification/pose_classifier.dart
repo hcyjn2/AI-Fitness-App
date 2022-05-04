@@ -13,7 +13,7 @@ const tag = "PoseClassifier";
 // "Smaller amount indicates better Sensitivity and Vice Versa"
 const defaultMaxDistanceTopK = 30;
 // "Smaller amount indicates lesser Sensitivity and Vice Versa"
-const defaultMeanDistanceTopK = 9;
+const defaultMeanDistanceTopK = 10;
 
 class PoseClassifier {
   final List<PoseSample> __poseSamples;
@@ -29,6 +29,7 @@ class PoseClassifier {
     this.__meanDistanceTopK = defaultMeanDistanceTopK,
   ]) {
     // Z has a lower weight as it is generally less accurate than X & Y.
+    // A dummy PoseLandmark to scale down Z to 20%
     __axesWeights = PoseLandmark(PoseLandmarkType.nose, 1, 1, 0.2, 1);
   }
 
@@ -64,6 +65,7 @@ class PoseClassifier {
   ClassificationResult classify(List<PoseLandmark> landmarks) {
     ClassificationResult result = new ClassificationResult();
 
+    // Joint Angle of 3 PoseLandmarks, not used due to Angles changes according to user distance to the device
     ClassificationResult evaluateAnkleJointAngle(
         List<PoseLandmark> landmarks, ClassificationResult result) {
       int leftKneeJoint = PoseEmbedding.getJointAngle(
@@ -83,17 +85,6 @@ class PoseClassifier {
           landmarks.elementAt(PoseLandmarkType.rightAnkle.index),
           landmarks.elementAt(PoseLandmarkType.rightFootIndex.index));
 
-      // Able to identify the angles but not consistently
-      // if (leftAnkleJoint > 177 &&
-      //     leftAnkleJoint <= 195 &&
-      //     rightAnkleJoint <= 180 &&
-      //     leftKneeJoint >= 172 &&
-      //     leftKneeJoint <= 185 &&
-      //     rightKneeJoint >= 172 &&
-      //     rightKneeJoint <= 185) {
-      //   result.incrementClassConfidence('jumpsquats_down');
-      // }
-
       return result;
     }
 
@@ -108,7 +99,6 @@ class PoseClassifier {
       Utils.multiply(lm, PoseLandmark(lm.type, -1, 1, 1, lm.likelihood));
     }
 
-    // TODO
     List<PoseLandmark> embedding =
         PoseEmbedding.getPoseEmbedding(landmarks, __poseClass);
     List<PoseLandmark> flippedEmbedding =
@@ -121,7 +111,6 @@ class PoseClassifier {
     //    that are closest by average.
 
     // Keeps max distance on top so we can pop it when top_k size is reached.
-    // TODO compare & PriorityQueue function might be wrong.
     PriorityQueue<Tuple2<PoseSample, double>> maxDistances =
         new PriorityQueue((o1, o2) => -compare(o1, o2));
 

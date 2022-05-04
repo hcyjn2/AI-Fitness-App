@@ -32,7 +32,6 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     future = getFuture();
   }
@@ -221,8 +220,10 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
             text: '2. Ample of Physical Space\n',
             style: workoutStartMessageStyle),
         new TextSpan(
-            text:
-                '3. Device is around Waist Height & Able to Capture Full Body\n',
+            text: '3. Device is around Waist Height\n',
+            style: workoutStartMessageStyle),
+        new TextSpan(
+            text: '4. Device is able to Capture Full Body\n',
             style: workoutStartMessageStyle),
       ],
     ),
@@ -280,7 +281,7 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                          '\u00b7 Hip should be on the same level / lower than your knees.',
+                          '\u00b7 Hips should slightly lower than your knees. \n \u00b7 Back should be straight when going down.',
                           style: TextStyle(
                               fontFamily: 'nunito',
                               fontSize: 15,
@@ -290,7 +291,7 @@ class _WorkoutMenuState extends State<WorkoutMenu> {
                   ),
                   Container(
                       child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 60, 20, 0),
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                     child: MaterialButton(
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15)),

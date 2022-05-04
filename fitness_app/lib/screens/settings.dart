@@ -18,7 +18,6 @@ class _SettingsState extends State<Settings> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     future = getFuture();
   }

@@ -29,8 +29,6 @@ class RepetitionCounter {
     double poseConfidence =
         classificationResult.getClassConfidence(__className) ?? 0;
 
-    // print(__className + ' : ' + poseConfidence.toString());
-
     if (!__poseEntered) {
       __poseEntered = poseConfidence > __enterThreshold;
       return __numRepeats;
