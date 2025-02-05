@@ -1,4 +1,4 @@
-# Fitness Mobile App
+# AI Fitness App
 
 Demo Video: https://photos.app.goo.gl/PxnAo3rvoCcq54Zv6 
 GitHub Link: https://github.com/hcyjn2/Fitness-Mobile-App
