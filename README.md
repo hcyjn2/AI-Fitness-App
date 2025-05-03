@@ -3,9 +3,6 @@
 Demo Video: https://photos.app.goo.gl/PxnAo3rvoCcq54Zv6 
 GitHub Link: https://github.com/hcyjn2/Fitness-Mobile-App
 
-Everything in the lib folder of this application is developed by the author -- Ng Jiun Loong.
-Additionally, there were external libraries used, provided below.
-
 List of external libraries used in this project:
 1. convex_bottom_bar
 2. font_awesome_flutter
@@ -44,3 +41,6 @@ Alternative:
 1. Download the APK from this link https://drive.google.com/file/d/1HwKtBv7fCqMPcBahE_jkNKtWYb7LOyqg/view?usp=sharing.
 2. Install the APK in your Android device with file manager.
 3. The app should be able launch in your device.
+
+Reference:
+https://developers.google.com/ml-kit/vision/pose-detection/classifying-poses
